@@ -1,0 +1,226 @@
+%==========================================================
+% template.tex
+%==========================================================
+\documentclass[letterpaper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xstring}
+
+%-----------------------------------------------------
+% Strip off “<scheme>://” from a URL, leaving just the
+% domain+path.  We look for “://” and grab everything
+% after it.  If there is no “://”, we output the whole
+% string unchanged.
+%-----------------------------------------------------
+\newcommand{\ShortURL}[1]{%
+  \IfSubStr{#1}{://}{%
+    % if “://” appears, take everything after “://”
+    \StrBehind{#1}{://}[\urlbody]%
+    \urlbody
+  }{%
+    % otherwise, no “://” → just print #1
+    #1
+  }%
+}
+
+
+%----------------------------------------------------------
+% Overall spacing (no indent, no extra paragraph skip):
+%----------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+%----------------------------------------------------------
+% itemize: zero extra space before/after and minimal between items
+%----------------------------------------------------------
+\setlist[itemize]{%
+  topsep=0pt,     % no extra gap above/below list
+  itemsep=0pt,    % no gap between successive \item
+  parsep=0pt,     % no gap between paragraphs inside an item
+  partopsep=0pt,  % no “part‐paragraph” space if list is mid‐paragraph
+  leftmargin=1em  % indent for bullets
+}
+
+%----------------------------------------------------------
+% A tiny vertical gap macro (for “section” separation)
+%----------------------------------------------------------
+\newcommand{\sectionspace}{\vspace{0.5em}}
+
+%----------------------------------------------------------
+% Remove page numbers
+%----------------------------------------------------------
+\pagenumbering{gobble}
+
+%----------------------------------------------------------
+% === PERSONAL INFO SLOTS ===
+%   These macros will be overridden in content.tex
+%----------------------------------------------------------
+\newcommand{\Name}{}
+\newcommand{\Title}{}
+\newcommand{\Phone}{}
+\newcommand{\Email}{}
+\newcommand{\Location}{}
+\newcommand{\LinkedInURL}{}
+\newcommand{\WebsiteURL}{}
+
+%----------------------------------------------------------
+% === HEADER MACRO ===
+%   Prints Name, Title, and Contact line
+%----------------------------------------------------------
+\newcommand{\MakeHeader}{%
+  \begin{center}
+    {\large\bfseries \Name}\\
+    {\itshape \Title}\\
+    \sectionspace%
+    \Phone \,$|$\, 
+    \href{mailto:\Email}{\Email} \,$|$\, 
+    \Location \,$|$\, 
+    \href{\LinkedInURL}{\ShortURL{\LinkedInURL}} \,$|$\, 
+    \href{\WebsiteURL}{\ShortURL{\WebsiteURL}}
+  \end{center}
+  \sectionspace
+}
+
+%----------------------------------------------------------
+% === PROFILE SLOT ===
+%   Overridden to hold a short paragraph in content.tex
+%----------------------------------------------------------
+% A custom “horizontal rule” that always leaves 0.5em below it:
+\newcommand{\SectionRule}{%
+  \par\noindent
+  \hrule width \textwidth height 0.5pt
+  \vspace{0.5em}%
+}
+\newcommand{\ProfileText}{}
+
+%----------------------------------------------------------
+% Helper  →  Bold everything up to the FIRST comma
+%----------------------------------------------------------
+\newcommand{\BoldBeforeComma}[1]{%
+  % Append a “,\relax” so that we always have a comma to split on
+  \expandafter\BoldBeforeCommaAux#1,\relax
+}
+
+% This auxiliary macro grabs “<text before comma>” as #1
+% and “<text after comma>” as #2, stopping at the \relax.
+\def\BoldBeforeCommaAux#1,#2\relax{%
+  {\bfseries #1}%        % bold the part before the comma
+  \ifx\relax#2\relax     % if #2 == \relax, there was no comma → do nothing
+  \else
+    ,#2                   % otherwise reprint the comma and whatever follows
+  \fi
+}
+
+%----------------------------------------------------------
+% === MACROS FOR EDUCATION ENTRIES ===
+%   #1 = Institution + City/State
+%   #2 = Dates
+%   #3 = “Degree (GPA: …)”
+%   #4 = <\begin{itemize} … \end{itemize}> block
+%----------------------------------------------------------
+\newcommand{\EducationEntry}[4]{%
+  \noindent
+  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    \BoldBeforeComma{#1} & #2 \\        % <— use the helper here
+    \multicolumn{2}{l}{\textit{#3}} \\
+  \end{tabular*}%
+  #4%
+  \sectionspace
+}
+
+%----------------------------------------------------------
+% === MACROS FOR EXPERIENCE ENTRIES ===
+%   #1 = Company + City/State
+%   #2 = Dates
+%   #3 = Job Title
+%   #4 = <\begin{itemize} … \end{itemize}> block
+%----------------------------------------------------------
+\newcommand{\ExperienceEntry}[4]{%
+  \noindent
+  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    \BoldBeforeComma{#1} & #2 \\        % <— use the helper here
+    \multicolumn{2}{l}{\textit{#3}} \\
+  \end{tabular*}%
+  #4%
+  \sectionspace
+}
+
+%----------------------------------------------------------
+% === MACROS FOR LEADERSHIP & COMMUNITY ENTRIES ===
+%   #1 = Organization + City/State
+%   #2 = Dates
+%   #3 = Role
+%   #4 = <\begin{itemize} … \end{itemize}> block
+%----------------------------------------------------------
+\newcommand{\LeadershipEntry}[4]{%
+  \noindent
+  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    \BoldBeforeComma{#1} & #2 \\        % <— use the helper here
+    \multicolumn{2}{l}{\textit{#3}} \\
+  \end{tabular*}%
+  #4%
+  \sectionspace
+}
+
+%----------------------------------------------------------
+% === MACRO FOR AWARDS ===
+%   #1 = Award‐Name (Year)
+%   This is used inside a single \begin{itemize} … \end{itemize}.
+%----------------------------------------------------------
+\newcommand{\AwardEntry}[1]{%
+  \item #1
+}
+
+%==========================================================
+% Document begins.  First we “\input” content.tex so that
+%   all personal macros (\Name, \ProfileText, etc.) are defined.
+%==========================================================
+\begin{document}
+
+% 0) Load the user’s content (overrides all macros and defines
+%    grouped‐entry commands like \EducationEntries, \ExperienceEntries, etc.)
+\input{content.tex}
+
+% 1) Header
+\MakeHeader
+
+% 2) PROFILE
+\noindent\textbf{PROFILE}\newline
+\SectionRule
+\ProfileText    % <— content.tex must have redefined this
+\sectionspace
+
+% 3) EDUCATION
+\noindent\textbf{EDUCATION}\newline
+\SectionRule
+\sectionspace
+\EducationEntries   % <— content.tex must define this
+
+% 4) SKILLS & INTERESTS
+\sectionspace
+\SkillsText         % <— content.tex must define this
+\sectionspace
+
+% 5) EXPERIENCE
+\noindent\textbf{EXPERIENCE}\newline
+\SectionRule
+\sectionspace
+\ExperienceEntries  % <— content.tex must define this
+
+% 6) LEADERSHIP & COMMUNITY INVOLVEMENT
+\noindent\textbf{LEADERSHIP \& COMMUNITY INVOLVEMENT}\newline
+\SectionRule
+\sectionspace
+\LeadershipEntries  % <— content.tex must define this
+
+% 7) SELECTED HONORS AND AWARDS
+\noindent\textbf{SELECTED HONORS AND AWARDS}\newline
+\SectionRule
+\sectionspace
+\begin{itemize}
+  \AwardsList      % <— content.tex must define this
+\end{itemize}
+
+\end{document}
