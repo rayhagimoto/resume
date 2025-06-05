@@ -1,55 +1,44 @@
 name: Build LaTeX and Deploy
 
-# Trigger on pushes to 'main'
 on:
   push:
     branches: [ main ]
 
 permissions:
-  contents: write  # allow pushing back to repo
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Check out the repository, so we have access to main.tex & content.tex.
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: true
 
-      # 2) Compile main.tex to main.pdf using the xu-cheng LaTeX Action
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: src/main.tex
+          working_directory: src
+          root_file: main.tex
 
-      # 3) Rename main.pdf → hagimoto-resume.pdf
-      - name: Rename PDF
-        run: mv main.pdf hagimoto-resume.pdf
+      - name: Move PDF to root and rename
+        run: mv src/main.pdf hagimoto-resume.pdf
 
-      # 4) Switch to gh-pages, wipe old files, add hagimoto-resume.pdf, commit & force-push
       - name: Deploy to gh-pages
         run: |
-          # Set up a bot identity
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # If gh-pages exists, check it out; otherwise create an orphan branch
           if git show-ref --quiet refs/heads/gh-pages; then
             git checkout gh-pages
           else
             git checkout --orphan gh-pages
           fi
 
-          # Remove all tracked files on this branch
           git rm -rf .
-
-          # Add the newly built resume PDF
           git add hagimoto-resume.pdf
-
-          # Commit and force-push to overwrite gh-pages history
           git commit -m "Deploy hagimoto-resume.pdf"
           git push origin gh-pages --force
