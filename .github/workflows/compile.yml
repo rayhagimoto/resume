@@ -22,10 +22,10 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: src
-          root_file: main.tex
+          root_file: template.tex
 
       - name: Move PDF to root and rename
-        run: mv src/main.pdf hagimoto-resume.pdf
+        run: mv src/template.pdf hagimoto-resume.pdf
 
       - name: Deploy to gh-pages
         run: |
