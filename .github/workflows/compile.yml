@@ -13,41 +13,24 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Build and Deploy in TeXLive environment
+        uses: xu-cheng/texlive-action@v2
         with:
-          fetch-depth: 0
-          persist-credentials: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml jinja2
-
-      - name: Install LaTeX (latexmk and dependencies)
-        uses: xu-cheng/texlive-action@v0.3
-        with:
-          packages: latexmk
-
-      - name: Build Resume PDF
-        run: python render_resume.py
-
-      - name: Deploy to gh-pages
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git show-ref --quiet refs/heads/gh-pages; then
-            git checkout gh-pages
-          else
-            git checkout --orphan gh-pages
-          fi
-
-          git rm -rf .
-          git add hagimoto-resume.pdf
-          git commit -m "Deploy hagimoto-resume.pdf"
-          git push origin gh-pages --force
+          scheme: full
+          run: |
+            apk add --no-cache python3 py3-pip
+            pip3 install pyyaml jinja2
+            python3 render_resume.py
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            if git show-ref --quiet refs/heads/gh-pages; then
+              git checkout gh-pages
+            else
+              git checkout --orphan gh-pages
+            fi
+            git rm -rf .
+            git add hagimoto-resume.pdf
+            git commit -m "Deploy hagimoto-resume.pdf"
+            git push origin gh-pages --force
