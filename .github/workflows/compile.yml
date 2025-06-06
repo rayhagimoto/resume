@@ -25,14 +25,23 @@ jobs:
       - name: Compile template
         run: python compile_template.py
 
-      - name: Compile LaTeX
-        uses: xu-cheng/latex-action@v3
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@v4
         with:
-          root_file: main.tex
-          working_directory: src
-          pre_compile: |
-            tlmgr update --self
-            tlmgr install ltxcmds pdfescape kvoptions hyperref
+          packages: >
+            scheme-basic
+            ltxcmds
+            pdfescape
+            kvoptions
+            hyperref
+            latex-bin
+            latex-bin-dev
+
+      - name: Compile LaTeX
+        run: |
+          cd src
+          ~/texlive/bin/x86_64-linux/pdflatex main.tex
+          ~/texlive/bin/x86_64-linux/pdflatex main.tex  # Run twice for references
 
       - name: Move PDF to root
         run: mv src/main.pdf hagimoto-resume.pdf
