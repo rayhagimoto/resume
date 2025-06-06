@@ -1,0 +1,132 @@
+candidate:
+  name: 'Ray Hagimoto'
+  summary: |
+    Computational physics PhD with 5 years of data analysis and Python programming experience.
+    Seeking quantitatively complex challenges in data science.
+    Experienced with Monte Carlo simulations and statistical inference on real data.
+  location: '1024 N Logan Ave, Danville, IL 61832'
+  phone: '830-212-9632'
+  email: 'rayhagimoto@gmail.com'
+  website: 'https://rayhagimoto.xyz'
+  linkedin: 'https://linkedin.com/in/ray-hagimoto'
+  github: null  # Add if desired
+
+education:
+  - university: 'Rice University'
+    degree: 'PhD in Physics'
+    dates: 'Aug 2020 – Dec 2024'
+    gpa: '3.90'
+    comments: 'Coursework includes computational physics (Python), probability theory, and quantum field theory.'
+  - university: 'University of Texas at San Antonio'
+    degree: 'BS in Physics'
+    dates: 'Aug 2016 – May 2020'
+    gpa: '4.00'
+    comments: 'Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.'
+
+skills:
+  - Python
+  - Jupyter
+  - git
+  - UNIX/Linux
+  - Numpy
+  - Pandas
+  - LightGBM
+  - SHAP
+  - scikit-learn
+  - machine learning
+  - HDF5
+  - matplotlib
+  - HPC and cloud computing
+  - SLURM
+
+experience:
+  research_and_industry:
+    - title: 'Quantitative Researcher PhD Intern'
+      organization: 'Susquehanna International Group'
+      location: 'Bala Cynwyd, PA'
+      dates: 'June 2024 – Aug 2024'
+      bullets:
+        - Participated in 10-week quantitative finance internship at the largest US equity options market-making firm.
+        - Developed a trading strategy using financial time series in a simulated environment.
+        - Underwent options trading education, including the Black-Scholes model and risk neutral pricing.
+        - Used SHAP values to guide feature engineering for boosted decision trees.
+
+    - title: 'Graduate Researcher'
+      organization: 'Rice University'
+      location: 'Houston, TX'
+      dates: 'Aug 2020 – Dec 2024'
+      bullets:
+        - Built neural networks to estimate parameters from cosmological data.
+        - Developed a Bayesian simulation and MCMC-based Python package.
+        - Extended ArviZ and matplotlib source code for custom scientific visualization.
+
+    - title: 'Undergraduate Summer Researcher'
+      organization: 'University of Chicago'
+      location: 'Chicago, IL'
+      dates: 'June 2019 – Sept 2019'
+      bullets:
+        - Built Python software for astrophysical correlation function analysis.
+        - Co-authored publication in \emph{The Astrophysical Journal Letters}.
+
+  leadership:
+    - title: 'Vice President'
+      org: 'Physics and Astronomy Graduate Student Association, Rice University'
+      dates: '2022 – 2023'
+
+
+talks:
+  - title: 'Extracting Axion String Network Parameters from Simulated CMB Birefringence Maps using Convolutional Neural Networks'
+    venue: 'Tohoku University invited seminar'
+    year: 2025
+
+  - title: 'CMB birefringence from cosmic axion strings'
+    venue: 'Pheno 2023'
+    year: 2023
+
+  - title: 'Non-Gaussianity in the CMB from cosmic axion strings'
+    venue: 'Astronomy Seminar, Spring'
+    year: 2023
+
+  - title: 'Measures of non-Gaussianity in axion-string induced birefringence'
+    venue: 'Astronomy Seminar, Fall'
+    year: 2023
+
+  - title: 'CMB Birefringence, Power Spectra, and Estimators'
+    venue: 'Astronomy Seminar, Fall'
+    year: 2022
+
+  - title: 'Looking for cosmic axion strings in CMB data'
+    venue: 'Astronomy Seminar, Spring'
+    year: 2022
+
+coursework:
+  - course: 'Classical Dynamics PHYS 515'
+    grade: 'A-'
+  - course: 'Quantum Mechanics PHYS 521'
+    grade: 'A'
+  - course: 'Quantum Field Theory PHYS 622'
+    grade: 'A+'
+  - course: 'Galaxies and Cosmology ASTR 452'
+    grade: 'A'
+  - course: 'Computational Physics PHYS 517'
+    grade: 'A'
+  - course: 'Statistical Physics PHYS 526'
+    grade: 'A'
+  - course: 'Probability STAT 518'
+    grade: 'A-'
+  - course: 'Classical Electrodynamics PHYS 532'
+    grade: 'A'
+  - course: 'Physics of Quarks and Leptons PHYS 543'
+    grade: 'A+'
+
+awards:
+  - 'NSF Graduate Research Fellowship Award Honorable Mention (2021)'
+  - 'Rice University Deans Fellowship (2020 - 2024)'
+  - 'Deans List, UTSA (2016 – 2020)'
+  - 'Presidential Scholarship, UTSA (2016 – 2020)'
+  - 'National Merit Scholar (2016)'
+
+technologies:
+  languages: 'Python, C++, SQL'
+  stack: 'NumPy, Pandas, LightGBM, SHAP, scikit-learn, matplotlib, HDF5, Jupyter, git, UNIX/Linux, tensorflow'
+  platforms: 'HPC/SLURM, cloud computing'
