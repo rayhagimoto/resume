@@ -1,4 +1,4 @@
-name: Build LaTeX and Deploy
+name: Build Resume and Deploy
 
 on:
   push:
@@ -18,14 +18,23 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Compile LaTeX
-        uses: xu-cheng/latex-action@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          working_directory: src
-          root_file: template.tex
+          python-version: '3.12'
 
-      - name: Move PDF to root and rename
-        run: mv src/template.pdf hagimoto-resume.pdf
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml jinja2
+
+      - name: Install LaTeX
+        uses: xu-cheng/texlive-action@v0.3
+        with:
+          packages: latexmk
+
+      - name: Build Resume
+        run: python render_resume.py
 
       - name: Deploy to gh-pages
         run: |
