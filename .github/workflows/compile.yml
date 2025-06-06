@@ -18,23 +18,16 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Build PDF with latexmk-action
+        uses: yegor256/latexmk-action@0.16.2
         with:
-          python-version: '3.12'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml jinja2
-
-      - name: Install LaTeX
-        uses: xu-cheng/texlive-action@v0.3
-        with:
+          cmd: latexmk
+          path: src
+          opts: -pdf
           packages: latexmk
 
-      - name: Build Resume
-        run: python render_resume.py
+      - name: Move PDF to root and rename
+        run: mv src/template.pdf hagimoto-resume.pdf
 
       - name: Deploy to gh-pages
         run: |
