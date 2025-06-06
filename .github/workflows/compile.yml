@@ -21,8 +21,10 @@ jobs:
           scheme: full
           run: |
             apk add --no-cache python3 py3-pip
-            pip3 install pyyaml jinja2
-            python3 render_resume.py
+            python3 -m venv /tmp/venv
+            . /tmp/venv/bin/activate
+            pip install pyyaml jinja2
+            python render_resume.py
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             if git show-ref --quiet refs/heads/gh-pages; then
