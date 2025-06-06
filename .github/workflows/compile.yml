@@ -20,11 +20,20 @@ jobs:
         with:
           scheme: full
           run: |
+            # Install required LaTeX packages
+            tlmgr update --self
+            tlmgr install ltxcmds pdfescape kvoptions hyperref
+
+            # Set up Python environment
             apk add --no-cache python3 py3-pip
             python3 -m venv /tmp/venv
             . /tmp/venv/bin/activate
             pip install pyyaml jinja2
+
+            # Build the resume
             python render_resume.py
+
+            # Deploy to gh-pages
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             if git show-ref --quiet refs/heads/gh-pages; then
