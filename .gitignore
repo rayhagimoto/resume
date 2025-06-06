@@ -33,6 +33,7 @@
 # Common output folders
 /build/
 /output/
+src/main.tex
 *.pdf
 
 #----------------------------------
