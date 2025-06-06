@@ -7,6 +7,7 @@
 % Load base class
 \LoadClass[10pt,letterpaper]{article}
 
+
 % Required packages
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
@@ -15,7 +16,18 @@
 \RequirePackage{xstring}
 \RequirePackage{titlesec}
 \RequirePackage{titling}
+\RequirePackage{iftex} % check if engine is pdflatex, xetex or luatex
+\RequirePackage{ifthen}
 
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage{lmodern}
+\fi
 %----------------------------------------------------------
 % Redefine section to include spacing + rule
 %----------------------------------------------------------
