@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-fonts-recommended \
     texlive-fonts-extra \
     texlive-latex-extra \
+    lmodern \
+    texlive-science \
+    texlive-plain-generic \
+    texlive-lang-english \
     latexmk \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,4 +22,4 @@ WORKDIR /resume
 # Copy source files
 COPY . .
 
-# Build script will be mounted at runtime 
+# Build script will be mounted at runtime
