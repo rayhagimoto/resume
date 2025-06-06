@@ -1,13 +1,20 @@
 %==========================================================
-% styles.tex
+% styles.cls — Custom document class
 %==========================================================
-\usepackage[utf8]{inputenc}
-\usepackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
-\usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{xstring}
-\usepackage{titlesec}
-\usepackage{titling}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{styles}[2025/06/06 Custom CV/resume class]
+
+% Load base class
+\LoadClass[10pt,letterpaper]{article}
+
+% Required packages
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
+\RequirePackage{enumitem}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{xstring}
+\RequirePackage{titlesec}
+\RequirePackage{titling}
 
 %----------------------------------------------------------
 % Redefine section to include spacing + rule
