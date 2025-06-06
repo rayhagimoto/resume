@@ -25,22 +25,17 @@ jobs:
       - name: Compile template
         run: python compile_template.py
 
-      - name: Set up TeX Live
-        uses: xu-cheng/texlive-action@v2
-        with:
-          packages: |
-            latexmk
-            ltxcmds
-            pdfescape
-            kvoptions
-            hyperref
-
       - name: Compile LaTeX
-        run: |
-          cd src
-          latexmk -pdf main.tex
-          cd ..
-          mv src/main.pdf hagimoto-resume.pdf
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: src
+          pre_compile: |
+            tlmgr update --self
+            tlmgr install ltxcmds pdfescape kvoptions hyperref
+
+      - name: Move PDF to root
+        run: mv src/main.pdf hagimoto-resume.pdf
 
       - name: Deploy to gh-pages
         if: github.ref == 'refs/heads/main'
