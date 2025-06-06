@@ -8,7 +8,7 @@ mkdir -p ../build
 
 # Run pdflatex from the src directory
 cd src
-pdflatex -output-directory=../build main.tex
+pdflatex -output-directory=../build template.tex
 
 # Move the generated PDF to the final location
-mv ../build/main.pdf ../hagimoto-resume.pdf
+mv ../build/template.pdf ../hagimoto-resume.pdf
