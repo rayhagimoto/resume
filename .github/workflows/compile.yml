@@ -1,47 +1,58 @@
-name: Build Resume and Deploy
+name: Build Resume
 
 on:
   push:
     branches: [ main ]
-
-permissions:
-  contents: write
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Build and Deploy in TeXLive environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml jinja2
+
+      - name: Compile template
+        run: python compile_template.py
+
+      - name: Set up TeX Live
         uses: xu-cheng/texlive-action@v2
         with:
-          scheme: full
-          run: |
-            # Install required LaTeX packages
-            tlmgr update --self
-            tlmgr install ltxcmds pdfescape kvoptions hyperref
+          packages: |
+            latexmk
+            ltxcmds
+            pdfescape
+            kvoptions
+            hyperref
 
-            # Set up Python environment
-            apk add --no-cache python3 py3-pip
-            python3 -m venv /tmp/venv
-            . /tmp/venv/bin/activate
-            pip install pyyaml jinja2
+      - name: Compile LaTeX
+        run: |
+          cd src
+          latexmk -pdf main.tex
+          cd ..
+          mv src/main.pdf hagimoto-resume.pdf
 
-            # Build the resume
-            python render_resume.py
-
-            # Deploy to gh-pages
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            if git show-ref --quiet refs/heads/gh-pages; then
-              git checkout gh-pages
-            else
-              git checkout --orphan gh-pages
-            fi
-            git rm -rf .
-            git add hagimoto-resume.pdf
-            git commit -m "Deploy hagimoto-resume.pdf"
-            git push origin gh-pages --force
+      - name: Deploy to gh-pages
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git show-ref --quiet refs/heads/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+          fi
+          git rm -rf .
+          git add hagimoto-resume.pdf
+          git commit -m "Deploy hagimoto-resume.pdf"
+          git push origin gh-pages --force
