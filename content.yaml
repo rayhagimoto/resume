@@ -1,3 +1,4 @@
+target_company: 
 candidate:
   name: Ray Hagimoto
   title: 'Computational Physicist'  # Test GitHub Actions workflow
@@ -140,3 +141,9 @@ technologies:
   languages: 'Python, C++, SQL'
   stack: 'NumPy, Pandas, LightGBM, SHAP, scikit-learn, matplotlib, HDF5, Jupyter, git, UNIX/Linux, tensorflow'
   platforms: 'HPC/SLURM, cloud computing'
+
+projects:
+  title: Automated photography notification trigger leveraging AWS Lambda and S3
+  description: |
+    I built a pipeline that sends a notification to my phone whenever my camera has taken a picture of a bird or a squirrel. I set my camera up on a tripod to take a photo every 5 seconds. The photos are automatically sent to an android device, which uploads the compressed JPGs to an S3 bucket. Uploaded photos trigger an AWS Lambda function that runs a lightweight computer vision algorithm backed by OpenCV to analyze the image. If the image has a localized area that is noticeably different from the exponential moving average of the previous photos, it sends a notification to my Telegram account along with the image in question.
+  title: Automated resume writer 

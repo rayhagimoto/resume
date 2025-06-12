@@ -1,14 +1,21 @@
 %==========================================================
-% styles.cls — Custom document class
+% styles.cls — ATS-compatible Custom Resume Class
 %==========================================================
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{styles}[2025/06/06 Custom CV/resume class]
+\ProvidesClass{styles}[2025/06/12 ATS-safe resume class]
 
 % Load base class
 \LoadClass[10pt,letterpaper]{article}
 
-% Required packages
+% Unicode-safe font and encoding
 \RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+\DisableLigatures{encoding = *, family = *}
+\pdfgentounicode=1
+
+% Layout and formatting
 \RequirePackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
 \RequirePackage{enumitem}
 \RequirePackage[hidelinks]{hyperref}
@@ -17,14 +24,14 @@
 \RequirePackage{titling}
 
 %----------------------------------------------------------
-% Redefine section to include spacing + rule
+% Section formatting
 %----------------------------------------------------------
 \titleformat{\section}
   {\bfseries}{}{0pt}{}[{\vspace{0.1em} \titlerule[0.1pt]}]
 \titlespacing*{\section}{0pt}{0.6em}{0.6em}
 
 %----------------------------------------------------------
-% Strip off "<scheme>://" from a URL
+% Strip "<scheme>://" from URL for display
 %----------------------------------------------------------
 \newcommand{\ShortURL}[1]{%
   \IfSubStr{#1}{://}{%
@@ -34,7 +41,7 @@
 }
 
 %----------------------------------------------------------
-% No indent, no paragraph skip
+% No paragraph indent or skip
 %----------------------------------------------------------
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
@@ -51,12 +58,12 @@
 }
 
 %----------------------------------------------------------
-% Remove page numbers
+% No page numbers
 %----------------------------------------------------------
 \pagenumbering{gobble}
 
 %----------------------------------------------------------
-% === PERSONAL INFO SLOTS ===
+% === PERSONAL INFO MACROS ===
 %----------------------------------------------------------
 \newcommand{\Name}{}
 \newcommand{\Title}{}
@@ -80,7 +87,7 @@
     \href{\LinkedInURL}{\ShortURL{\LinkedInURL}} \,$|$\, 
     \href{\WebsiteURL}{\ShortURL{\WebsiteURL}}\\
     \vspace{0.2em}
-    \Location
+    Address: \Location
   \end{center}
 }
 
@@ -90,7 +97,7 @@
 \newcommand{\ProfileText}{}
 
 %----------------------------------------------------------
-% Helper → Bold everything up to the FIRST comma
+% Bold everything up to the first comma
 %----------------------------------------------------------
 \newcommand{\BoldBeforeComma}[1]{%
   \expandafter\BoldBeforeCommaAux#1,\relax
@@ -103,7 +110,7 @@
 }
 
 %----------------------------------------------------------
-% === EDUCATION ENTRY MACRO ===
+% Entry Macros
 %----------------------------------------------------------
 \newcommand{\EducationEntry}[4]{%
   \noindent
@@ -115,9 +122,6 @@
   \vspace{0.5em}
 }
 
-%----------------------------------------------------------
-% === EXPERIENCE ENTRY MACRO ===
-%----------------------------------------------------------
 \newcommand{\ExperienceEntry}[4]{%
   \noindent
   \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
@@ -128,9 +132,6 @@
   \vspace{0.5em}
 }
 
-%----------------------------------------------------------
-% === LEADERSHIP ENTRY MACRO ===
-%----------------------------------------------------------
 \newcommand{\LeadershipEntry}[4]{%
   \noindent
   \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
@@ -141,9 +142,6 @@
   \vspace{0.5em}
 }
 
-%----------------------------------------------------------
-% === AWARD ENTRY MACRO ===
-%----------------------------------------------------------
 \newcommand{\AwardEntry}[1]{%
   \item #1
-} 
+}

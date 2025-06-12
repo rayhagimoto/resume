@@ -1,20 +1,29 @@
 #!/bin/bash
 set -e
 
-# Run the Python script to generate the LaTeX file
-python compile_template.py
+IMAGE_NAME=resume-builder
+CONTAINER_NAME=resume-container
+OUTPUT_DIR=output
 
-# Compile the LaTeX document
-cd src
-latexmk -pdf main.tex
+# Clean up old container if it exists
+docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
-# Clean up auxiliary files
-latexmk -c
+# Ensure output directory is clean
+rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
 
-# Move the PDF to the root directory and rename it
-mv main.pdf ../hagimoto-resume.pdf
+# Build Docker image
+docker build -t "$IMAGE_NAME" .
 
-# Clean up any remaining auxiliary files
-rm -f *.aux *.log *.fls *.fdb_latexmk *.out *.synctex.gz
+# Run the container, mounting the output directory
+docker run --name "$CONTAINER_NAME" \
+  -e OUTPUT_DIR="$OUTPUT_DIR" \
+  -v "$(pwd)/$OUTPUT_DIR":/app/"$OUTPUT_DIR" \
+  "$IMAGE_NAME"
 
-echo "Resume has been built successfully as hagimoto-resume.pdf" 
+# Clean up the container
+docker rm -f "$CONTAINER_NAME" >/dev/null
+
+# List the result
+echo "✅ Resume(s) available in ./$OUTPUT_DIR:"
+ls "$OUTPUT_DIR"
