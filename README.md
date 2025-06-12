@@ -2,6 +2,8 @@
 
 A LaTeX-based resume builder that generates professional PDF resumes from a YAML configuration file. The project uses Docker to ensure consistent builds across different environments.
 
+[Example Output](https://rayhagimoto.github.io/resume/Ray_Hagimoto_Resume.pdf)
+
 ## Features
 
 - YAML-based resume content management
