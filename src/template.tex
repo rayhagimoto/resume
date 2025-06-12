@@ -31,7 +31,8 @@
 \BLOCK{for edu in education}
 \noindent
 \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-  \BoldBeforeComma{\VAR{edu.university}, \VAR{edu.degree}} & \VAR{edu.dates} \\
+  \BoldBeforeComma{\VAR{edu.university}} & \VAR{edu.dates} \\
+  \textit{\VAR{edu.degree}\BLOCK{if edu.gpa} (GPA: \VAR{edu.gpa})\BLOCK{endif}} &
 \end{tabular*}%
 \begin{itemize}
   \item \textit{\VAR{edu.comments}}
