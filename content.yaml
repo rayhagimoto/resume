@@ -16,12 +16,12 @@ candidate:
 education:
   - university: Rice University
     degree: PhD in Physics
-    dates: Aug 2020 – Dec 2024
+    dates: Aug 24 2020 – Dec 10 2024
     gpa: 3.90
     comments: Coursework includes computational physics (Python), probability theory, and quantum field theory.
   - university: University of Texas at San Antonio
     degree: BS in Physics
-    dates: Aug 2016 – May 2020
+    dates: Aug 22 2016 – May 23 2020
     gpa: 4.00
     comments: Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.
 
