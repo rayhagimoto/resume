@@ -15,32 +15,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Clean up old output
+        run: rm -rf output && mkdir -p output
+
       - name: Build Docker image
         run: docker build -t resume-builder .
 
-      - name: Build resume
-        run: docker run --rm -v "$(pwd):/resume" resume-builder bash -c "chmod +x build.sh && ./build.sh"
+      - name: Run resume build in Docker
+        run: |
+          docker run --name resume-container \
+            -e OUTPUT_DIR=output \
+            -v ${{ github.workspace }}/output:/app/output \
+            resume-builder python3 your_script.py
+          docker rm -f resume-container || true
+
+      - name: List outputs
+        run: ls -l output
+
+      - name: Upload resume PDF(s)
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-pdfs
+          path: output/*.pdf
 
       - name: Deploy to gh-pages
         if: github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Switch to or create gh-pages
           if git show-ref --quiet refs/heads/gh-pages; then
             git checkout gh-pages
           else
             git checkout --orphan gh-pages
           fi
-          
-          # Clean working tree
-          git rm -rf .
 
-          # Copy PDFs from output/
+          git rm -rf .
           cp output/*.pdf ./
-          
-          # Stage and commit
           git add *.pdf
           git commit -m "Deploy resume PDF(s)"
           git push origin gh-pages --force
