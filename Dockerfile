@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-# Install LaTeX and required packages
+# Install LaTeX and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-latex-base \
     texlive-fonts-recommended \
@@ -13,13 +13,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     latexmk \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python packages
 RUN pip install --no-cache-dir pyyaml jinja2
 
 # Set working directory
-WORKDIR /resume
+WORKDIR /app
 
-# Copy source files
+# Copy everything
 COPY . .
 
-# Build script will be mounted at runtime
+# Run script
+CMD ["python", "compile_resume.py"]
