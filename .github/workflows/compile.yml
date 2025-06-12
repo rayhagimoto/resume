@@ -26,7 +26,7 @@ jobs:
           docker run --name resume-container \
             -e OUTPUT_DIR=output \
             -v ${{ github.workspace }}/output:/app/output \
-            resume-builder python3 your_script.py
+            resume-builder python3 compile_resume.py
           docker rm -f resume-container || true
 
       - name: List outputs
