@@ -1,0 +1,113 @@
+%==========================================================
+% resume_template.tex
+%==========================================================
+\documentclass{styles}
+
+%==========================================================
+% Document begins
+%==========================================================
+% Set personal info
+\renewcommand{\Name}{\VAR{profile.name}}
+\renewcommand{\Title}{\VAR{profile.title}}
+\renewcommand{\Phone}{\VAR{profile.phone}}
+\renewcommand{\Email}{\VAR{profile.email}}
+\renewcommand{\Location}{\VAR{profile.location}}
+\renewcommand{\LinkedInURL}{\VAR{profile.linkedin}}
+\renewcommand{\WebsiteURL}{\VAR{profile.website}}
+
+\begin{document}
+
+% Header
+\MakeHeader
+
+\BLOCK{for section_name in sections}
+    \BLOCK{if section_name == 'profile'}
+        \BaseSection{PROFILE}{\VAR{profile.description}}
+    \BLOCK{elif section_name == 'education'}
+        \BaseSection{EDUCATION}{
+            \BLOCK{for item in education}
+                \BaseEntry
+                {\VAR{item.organization}}%
+                {\BLOCK{if item.dates is defined}\VAR{item.dates}\BLOCK{endif}}%
+                {\BLOCK{if item.title is defined}\VAR{item.title}\BLOCK{endif}}%
+                {\BLOCK{if item.location is defined}\VAR{item.location}\BLOCK{endif}}%
+                {
+                  \BLOCK{if item.bullets is defined}
+                  \AddBullets{
+                      \BLOCK{for bullet in item.bullets}
+                          \item \VAR{bullet}
+                      \BLOCK{endfor}
+                  }
+                  \BLOCK{endif}
+                }%
+            \BLOCK{endfor}
+        }
+    \BLOCK{elif section_name == 'skills'}
+        \BaseSection{SKILLS}{\SkillsEntry{\BLOCK{for skill in skills}\VAR{skill}\BLOCK{if not loop.last}, \BLOCK{endif}\BLOCK{endfor}}}
+    \BLOCK{elif section_name == 'experience'}
+        \BaseSection{EXPERIENCE}{
+            \BLOCK{for item in experience}
+                \BaseEntry{\VAR{item.title}}%
+                {\BLOCK{if item.dates is defined}\VAR{item.dates}\BLOCK{endif}}%
+                {\BLOCK{if item.organization is defined}\VAR{item.organization}\BLOCK{endif}}%
+                {\BLOCK{if item.location is defined}\VAR{item.location}\BLOCK{endif}}%
+                {
+                    \BLOCK{if item.bullets is defined}
+                        \AddBullets{
+                            \BLOCK{for bullet in item.bullets}
+                                \item \VAR{bullet}
+                            \BLOCK{endfor}
+                        }
+                    \BLOCK{endif}
+                }
+            \BLOCK{endfor}
+        }
+    \BLOCK{elif section_name == 'leadership'}
+        \BaseSection{LEADERSHIP}{
+            \BLOCK{for item in leadership}
+                \BaseEntry{
+                    \VAR{item.title}
+                }{
+                    \BLOCK{if item.dates is defined}\VAR{item.dates}\BLOCK{endif}
+                }{
+                    \BLOCK{if item.organization is defined}\VAR{item.organization}\BLOCK{endif}
+                }{
+                    \BLOCK{if item.location is defined}\VAR{item.location}\BLOCK{endif}
+                }{
+                    \BLOCK{if item.bullets is defined}
+                        \AddBullets{
+                            \BLOCK{for bullet in item.bullets}
+                                \item \VAR{bullet}
+                            \BLOCK{endfor}
+                        }
+                    \BLOCK{endif}
+                }
+            \BLOCK{endfor}
+        }
+    \BLOCK{elif section_name == 'awards'}
+        \BaseSection{AWARDS}{
+            \AwardsEntry{
+                \BLOCK{for award in awards}
+                    \item \VAR{award}
+                \BLOCK{endfor}
+            }
+        }
+    \BLOCK{elif section_name == 'projects'}
+        \BaseSection{PROJECTS}{
+            \BLOCK{for item in projects}
+                \BaseEntry
+                {\VAR{item.title}}
+                {\VAR{item.dates}}
+                {\VAR{item.organization}}
+                {\VAR{item.location}}
+                {
+                  \BLOCK{if item.description is defined}
+                      \VAR{item.description}
+                  \BLOCK{endif}
+                }
+            \BLOCK{endfor}
+        }
+    \BLOCK{endif}
+\BLOCK{endfor}
+
+\end{document}
