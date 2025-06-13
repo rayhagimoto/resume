@@ -59,9 +59,10 @@ Each section follows a specific format as shown in the example `content.yaml` fi
 
 #### 📦 Custom Sections
 
-This resume template organizes each section (e.g. Education, Experience, Projects) into an `mdframed` block. The reason is to **prevent section titles from being visually separated from their content** — a common issue with page breaks in LaTeX.
+This resume template organizes each section (e.g. Education, Experience, Projects) into an `mdframed` block to **prevent section titles from being visually separated from their content**.
 
-Each section reads from a `content.yaml` file and loops over the entries using a custom LaTeX macro called `\BaseEntry`.
+The content is populated by using a Python script to interpret the `content.yaml`, then create the LaTeX source code using `jinja2` templating. The `jinja2` template can be found at [resume_template.tex](src/resume_template.tex). 
+Most of the sections are styled using the `\BaseSection` and `\BaseEntry` LaTeX macros which are defined in [styles.cls](src/styles.cls).
 
 Here's an example of how the `education:` section is defined in YAML:
 
@@ -85,18 +86,28 @@ education:
       - Developed strong analytical and problem-solving skills.
 ```
 
-The LaTeX macro used to render each entry is:
+The template is then something like the following pseudocode:
 
 ```latex
-\BaseEntry{#1}{#2}{#3}{#4}{#5}
+% PSEUDOCODE
+\BaseSection{EDUCATION}{% % automatically converted to all caps using jinja template
+FOR entry IN section:
+  \BaseEntry%
+    {entry.arg1}% <-- user needs to choose which fields to access by editing the template.
+    {entry.arg2}%
+    {entry.arg3}%
+    {entry.arg4}%
+    {entry.arg5}%
+}%
+END FOR
 ```
 
 Where:
-- `#1`: Appears **bolded**, top-left (e.g. job title or degree)
-- `#2`: Appears **top-right**, same line (e.g. date range)
-- `#3`: Appears in *italics* beneath, left-aligned (e.g. organization or university)
-- `#4`: Appended to `#3` after a comma (e.g. location); omitted if empty
-- `#5`: Optional additional content (e.g. bullets or description), placed in a nested `TightFrame`
+- `arg1`: Appears **bolded**, top-left (e.g. job title or degree)
+- `arg2`: Appears **top-right**, same line (e.g. date range)
+- `arg3`: Appears in *italics* beneath, left-aligned (e.g. organization or university)
+- `arg4`: Appended to `#3` after a comma (e.g. location); omitted if empty
+- `arg5`: Optional additional content (e.g. bullets or description), placed in a nested `TightFrame`
 
 ---
 

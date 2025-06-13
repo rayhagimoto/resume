@@ -51,3 +51,6 @@ cursor.json
 # OS-specific
 .DS_Store
 Thumbs.db
+
+# Cursor
+.cursorrules
