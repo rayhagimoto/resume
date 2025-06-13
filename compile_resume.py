@@ -85,7 +85,7 @@ def main():
     content = render_latex(args.content)
 
     # Get output directory from environment variable
-    output_dir = os.environ.get("OUTPUT_DIR", "out")
+    output_dir = os.environ.get("OUTPUT_DIR", "output")
 
     # Determine the filename
     if args.filename:
