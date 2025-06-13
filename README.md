@@ -116,11 +116,11 @@ This YAML entry:
 Will render approximately as:
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│ Job Title                                 June 2024 – Aug 2024 │
-│ *Organization Name, Houston, TX*                           │
-│   • I did something cool which made a measurable impact.    │
-└────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│ **Job Title**                             June 2024 – Aug 2024 │
+│ _Organization Name,_ Houston, TX                               │
+│   • I did something cool which made a measurable impact.       │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 > Note: By default box outline is not printed since the custom `mdframed` environment I defined in `[styles.cls](src/styles.cls)` has no border (`linewidth=0pt`).
