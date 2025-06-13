@@ -67,20 +67,22 @@ Here's an example of how the `education:` section is defined in YAML:
 
 ```yaml
 education:
-  - organization: Rice University
-    title: Doctor of Philosophy in Physics
-    location: Houston, TX
-    dates: Aug 24 2020 – Dec 10 2024
-    gpa: 3.90
+  - organization: Generic University A
+    title: Doctor of Philosophy in [Your Field]
+    location: City A, State A
+    dates: Aug 20XX – Dec 20YY
+    gpa: 3.50
     bullets: 
-      - Coursework includes computational physics (Python), probability theory, and quantum field theory.
-  - organization: University of Texas at San Antonio
-    title: Bachelor of Science in Physics
-    location: San Antonio, TX
-    dates: Aug 22 2016 – May 23 2020
-    gpa: 4.00
+      - Advanced studies and research in [Your Field].
+      - Completed comprehensive coursework in core theoretical and applied areas.
+  - organization: Generic University B
+    title: Bachelor of Science in [Your Field]
+    location: City B, State B
+    dates: Aug 20XX – May 20YY
+    gpa: 3.50
     bullets: 
-      - Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.
+      - Foundational coursework in [Your Field] and related disciplines.
+      - Developed strong analytical and problem-solving skills.
 ```
 
 The LaTeX macro used to render each entry is:
@@ -103,25 +105,25 @@ Where:
 This YAML entry:
 
 ```yaml
-- organization: Susquehanna International Group
-  title: Quantitative Researcher PhD Intern
-  location: Bala Cynwyd, PA
+- organization: Organization Name
+  title: Job Title
+  location: Houston, TX
   dates: June 2024 – Aug 2024
   bullets:
-    - Built real-time market simulator in C++ and Python
+    - I did something cool which made a measurable impact.
 ```
 
 Will render approximately as:
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│ Quantitative Researcher PhD Intern             June 2024 – Aug 2024 │
-│ *Susquehanna International Group, Bala Cynwyd, PA*                 │
-│   • Built real-time market simulator in C++ and Python             │
+│ Job Title                                 June 2024 – Aug 2024 │
+│ *Organization Name, Houston, TX*                           │
+│   • I did something cool which made a measurable impact.    │
 └────────────────────────────────────────────────────────────┘
 ```
 
-> Note: The box outline is not printed if you're using the `TightFrame` environment with no border (`linewidth=0pt`).
+> Note: By default box outline is not printed since the custom `mdframed` environment I defined in `[styles.cls](src/styles.cls)` has no border (`linewidth=0pt`).
 
 
 
