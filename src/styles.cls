@@ -22,6 +22,7 @@
 \RequirePackage{xstring}
 \RequirePackage{titlesec}
 \RequirePackage{titling}
+\RequirePackage{mdframed}
 
 %----------------------------------------------------------
 % Section formatting
@@ -50,12 +51,25 @@
 % Tighter itemize formatting
 %----------------------------------------------------------
 \setlist[itemize]{%
-  topsep=0pt,
-  itemsep=0pt,
-  parsep=0pt,
-  partopsep=0pt,
-  leftmargin=1em
+topsep=0pt,
+itemsep=0pt,
+parsep=0pt,
+partopsep=0pt,
+leftmargin=1em
 }
+
+%----------------------------------------------------------
+% Custom mdframed block
+%----------------------------------------------------------
+\newmdenv[
+  linewidth=0pt,
+  innerleftmargin=0pt,
+  innerrightmargin=0pt,
+  innertopmargin=0pt,
+  innerbottommargin=0pt,
+  skipabove=0.5em,
+  skipbelow=0em
+]{TightFrame}
 
 %----------------------------------------------------------
 % No page numbers
@@ -110,38 +124,60 @@
 }
 
 %----------------------------------------------------------
-% Entry Macros
+% === BASE SECTION MACROS ===
 %----------------------------------------------------------
-\newcommand{\EducationEntry}[4]{%
-  \noindent
-  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-    \BoldBeforeComma{#1} & #2 \\
-    \multicolumn{2}{l}{\textit{#3}} \\
-  \end{tabular*}%
-  #4%
-  \vspace{0.5em}
+% Base section command for standard layout
+\newcommand{\BaseSection}[2]{%
+    % #1 = section title
+    % #2 = section content
+    \begin{TightFrame}
+      \section{#1}
+      #2
+    \end{TightFrame}
 }
 
-\newcommand{\ExperienceEntry}[4]{%
-  \noindent
-  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-    \BoldBeforeComma{#1} & #2 \\
-    \multicolumn{2}{l}{\textit{#3}} \\
-  \end{tabular*}%
-  #4%
-  \vspace{0.5em}
+\newcommand{\BaseEntry}[5]{%
+    % #1 = Bold text[comma] (use for titles or university)
+    % #2 = dates (right-aligned, on same line as #1)
+    % #3 = Italics on new line under #1 and #2 (use for degree title, organization name)
+    % #4 = location
+    % #5 = content
+    \begin{TightFrame}
+      \makebox[0pt][l]{%
+        \parbox{\linewidth}{%
+          \BoldBeforeComma{#1}%
+          \hfill
+          #2\\%
+          \textit{#3\ifx\empty#4\empty\else, #4\fi}%
+          \begin{TightFrame}
+            #5
+          \end{TightFrame}
+        }%
+      }%
+    \end{TightFrame}%
 }
 
-\newcommand{\LeadershipEntry}[4]{%
-  \noindent
-  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-    \BoldBeforeComma{#1} & #2 \\
-    \multicolumn{2}{l}{\textit{#3}} \\
-  \end{tabular*}%
-  #4%
-  \vspace{0.5em}
+% Add bullets to an entry
+\newcommand{\AddBullets}[1]{%
+    \begin{itemize}[leftmargin=1em]
+        #1
+    \end{itemize}%
 }
 
-\newcommand{\AwardEntry}[1]{%
-  \item #1
+% Add description to an entry
+\newcommand{\AddDescription}[1]{%
+    % \noindent#1%
+    #1%
+    \vspace{0.5em}%
+}
+
+
+\newcommand{\SkillsEntry}[1]{%
+    \noindent{\textbf{Skills:}} #1
+}
+
+\newcommand{\AwardsEntry}[1]{%
+    \begin{itemize}
+        #1
+    \end{itemize}
 }
