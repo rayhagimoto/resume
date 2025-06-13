@@ -7,10 +7,12 @@ import jinja2
 import argparse
 import shutil
 from pathlib import Path
+import pypandoc
 
 
 BUILD_DIR = "build"
-SRC_DIR = "src"
+ROOT = Path(__file__).parent.resolve()
+SRC_DIR = ROOT / "src"
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 
 def get_default_filename(content):
@@ -19,22 +21,50 @@ def get_default_filename(content):
     company = company.replace(" ", "") if company and company.lower() != "none" else None
     return f"{name}_Resume_{company}.pdf" if company else f"{name}_Resume.pdf"
 
+def convert_markdown_to_latex(obj):
+    """
+    Recursively convert all string leaves in a nested structure
+    (dict/list/scalar) from Markdown to LaTeX using pypandoc.
+    """
+    if isinstance(obj, str):
+        return pypandoc.convert_text(obj, to='latex', format='markdown').strip()
+    elif isinstance(obj, list):
+        return [convert_markdown_to_latex(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_markdown_to_latex(value) for key, value in obj.items()}
+    else:
+        return obj  # Leave ints, floats, bools, etc. unchanged
+
 def render_sections(env, content):
     rendered = []
     for section in content["sections"]:
+        section = section.strip()
         template_path = f"sections/{section}.tex"
+        print(f"Accessing at template_path = {template_path}")
         try:
             tmpl = env.get_template(template_path)
-            context = {section: content.get(section)}
-            rendered.append(tmpl.render(**context))
+            items = content.get(section)
+            rendered.append(tmpl.render(**content))
         except jinja2.exceptions.TemplateNotFound:
             print(f"⚠️  Skipping unknown section: {section}")
     return "\n\n".join(rendered)
+
+# Normalize dashes to simple hyphen
+def normalize_dashes(s: str) -> str:
+    return (
+        s.replace("–", "-")   # en-dash (U+2013)
+         .replace("—", "-")   # em-dash (U+2014)
+         .replace("--", "-")  # LaTeX double hyphen
+    )
 
 def render_latex(content_file='content.yaml'):
     # Load YAML
     with open(content_file, 'r') as f:
         content = yaml.safe_load(f)
+
+    # Preprocess content to convert all markdown strings to LaTeX
+    content = convert_markdown_to_latex(content)
+    print(content['projects'][1])
 
     # Set up Jinja
     env = jinja2.Environment(
@@ -46,8 +76,10 @@ def render_latex(content_file='content.yaml'):
         comment_end_string=r'}',
         trim_blocks=True,
         autoescape=False,
-        loader=jinja2.FileSystemLoader(SRC_DIR)
+        loader=jinja2.FileSystemLoader(str(SRC_DIR))
     )
+    print("📄 Available templates:", env.list_templates())
+
 
     # Render sections
     sections_tex = render_sections(env, content)
@@ -57,8 +89,10 @@ def render_latex(content_file='content.yaml'):
     full_tex = main_template.render(sections=sections_tex, profile=content['profile'])
 
     # Write main.tex to build/
-    with open(os.path.join(BUILD_DIR, "main.tex"), "w") as f:
-        f.write(full_tex)
+    build_main_tex = Path(BUILD_DIR) / "main.tex"
+    build_main_tex.parent.mkdir(parents=True, exist_ok=True)
+    with open(build_main_tex, "w", encoding="utf-8") as f:
+        f.write(normalize_dashes(full_tex))
 
     return content
 
@@ -82,8 +116,8 @@ def compile_pdf(resume_name, output_dir):
     )
 
     os.makedirs(output_dir, exist_ok=True)
-    src_pdf = os.path.join(BUILD_DIR, "main.pdf")
-    dst_pdf = os.path.join(output_dir, resume_name)
+    src_pdf = Path(BUILD_DIR) / "main.pdf"
+    dst_pdf = Path(output_dir) / resume_name
     shutil.move(src_pdf, dst_pdf)
     print(f"✅ Built PDF: {dst_pdf}")
 
