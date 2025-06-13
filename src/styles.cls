@@ -73,7 +73,8 @@ leftmargin=1em
   innertopmargin=0pt,
   innerbottommargin=0pt,
   skipabove=0.5em,
-  skipbelow=0em
+  skipbelow=0em,
+  nobreak=true
 ]{TightFrame}
 
 %----------------------------------------------------------
