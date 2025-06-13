@@ -4,10 +4,23 @@ import os
 import subprocess
 import yaml
 import jinja2
+import argparse
+import shutil
 
-def render_latex():
+def get_default_filename(content):
+    """Get the default filename based on content.yaml data."""
+    candidate_name = content["candidate"]["name"].replace(" ", "_")
+    target_company = content.get("target_company", "")
+    target_company = None if target_company in [None, "", "None"] else target_company.replace(" ", "")
+    
+    if target_company:
+        return f"{candidate_name}_Resume_{target_company}.pdf"
+    else:
+        return f"{candidate_name}_Resume.pdf"
+
+def render_latex(content_file='content.yaml'):
     # Load YAML content
-    with open('content.yaml', 'r') as f:
+    with open(content_file, 'r') as f:
         content = yaml.safe_load(f)
 
     # Set up Jinja2 environment
@@ -38,18 +51,19 @@ def render_latex():
 
     return content
 
-import shutil
-
-def compile_pdf(resume_name):
+def compile_pdf(resume_name, output_dir):
     # Compile LaTeX with latexmk inside src/
     subprocess.run(["latexmk", "-pdf", "main.tex"], cwd="src", check=True)
 
-    # Move final PDF to output directory
-    output_dir = os.environ.get("OUTPUT_DIR", "out")
+    # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
+    
+    # Move final PDF to output directory
     src_pdf = os.path.join("src", "main.pdf")
     dst_pdf = os.path.join(output_dir, resume_name)
-    print(dst_pdf)
+    print(f"Built PDF: {dst_pdf}")
+    
+    # Move the new file
     shutil.move(src_pdf, dst_pdf)
 
     # Clean up
@@ -60,23 +74,26 @@ def compile_pdf(resume_name):
         except FileNotFoundError:
             pass
 
-
-
 def main():
-    content = render_latex()
+    parser = argparse.ArgumentParser(description='Compile resume from YAML content')
+    parser.add_argument('--content', default='content.yaml',
+                      help='Path to content.yaml file (default: content.yaml)')
+    parser.add_argument('--filename', default=None,
+                      help='Custom filename for the output PDF (default: auto-generated)')
+    args = parser.parse_args()
 
-    # Extract name and company
-    candidate_name = content["candidate"]["name"].replace(" ", "_")
-    target_company = content.get("target_company", "")
-    target_company = None if target_company in [None, "", "None"] else target_company.replace(" ", "")
+    content = render_latex(args.content)
 
-    # Build filename
-    if target_company:
-        resume_name = f"{candidate_name}_Resume_{target_company}.pdf"
+    # Get output directory from environment variable
+    output_dir = os.environ.get("OUTPUT_DIR", "out")
+
+    # Determine the filename
+    if args.filename:
+        resume_name = args.filename
     else:
-        resume_name = f"{candidate_name}_Resume.pdf"
+        resume_name = get_default_filename(content)
 
-    compile_pdf(resume_name)
+    compile_pdf(resume_name, output_dir)
     print(f"✅ Resume has been built successfully as {resume_name}")
 
 if __name__ == '__main__':
