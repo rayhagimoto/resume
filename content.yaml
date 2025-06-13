@@ -5,7 +5,8 @@ sections:
   - experience
   - leadership
   - awards
-  # - projects
+  - projects
+  - talks
 
 target_company: 
 profile:
@@ -68,6 +69,7 @@ experience:
       - Developed a trading strategy using financial time series in a simulated environment.
       - Underwent options trading education, including the Black-Scholes model and risk neutral pricing.
       - Used SHAP values to guide feature engineering for boosted decision trees.
+      - Built a trading strategy with **Sharpe ratio > 1,000,000**.
 
   - title: Graduate Researcher
     organization: Rice University
@@ -88,7 +90,8 @@ experience:
 
 leadership:
   - title: Vice President
-    organization: Physics and Astronomy Graduate Student Association, Rice University
+    organization: Physics and Astronomy Graduate Student Association
+    location: Rice University
     dates: 2022 – 2023
     bullets:
       - Organized professional development workshops and social events.
@@ -99,13 +102,13 @@ leadership:
     dates: 2019 - 2020
     bullets:
       - Organized club meetings and social events.
-      - Fundraised \$1,000 to support students to attend PHYSCon 2019.
+      - Fundraised $1,000 to support students to attend PHYSCon 2019.
       - Created a mentor-mentee program to improve support for undergraduate students.
 
 talks:
   - title: Extracting Axion String Network Parameters from Simulated CMB Birefringence Maps using Convolutional Neural Networks
     organization: Tohoku University invited seminar
-    date: Summer 2025
+    # date: Summer 2025
 
   - title: CMB birefringence from cosmic axion strings
     organization: Pheno 2023
@@ -129,9 +132,9 @@ talks:
 
 awards:
   - NSF Graduate Research Fellowship Award Honorable Mention (2021)
-  - Rice University Dean's Fellowship (2020 - 2024)
-  - Dean's List, UTSA (2016 – 2020)
-  - Presidential Scholarship, UTSA (2016 – 2020)
+  - Rice University Dean's Fellowship (2020-2024)
+  - Dean's List, UTSA (2016-2020)
+  - Presidential Scholarship, UTSA (2016-2020)
 
 coursework:
   - course: Classical Dynamics PHYS 515
@@ -181,12 +184,12 @@ projects:
     dates: '2024'
     description: |
       Building a containerized resume generation tool that compiles YAML-formatted resume content into
-      a clean, ATS-compatible PDF using a \LaTeX template and \texttt{latexmk}.
+      a clean, ATS-compatible PDF using a LaTeX template and `latexmk`.
       Designed for cross-platform reproducibility and consistent rendering via a Dockerized build pipeline.
       Users define content modularly in YAML, enabling structured sections that can be swapped or extended;
       while not fully toggle-based, the layout supports flexible customization through LaTeX template editing.
       The system integrates a custom resume submodule for optimized formatting
-      (\href{https://github.com/rayhagimoto/resume}{rayhagimoto/resume}) and
+      [rayhagimoto/resume](https://github.com/rayhagimoto/resume) and
       emphasizes build reproducibility, resume standardization, and developer-centric usability.
       Project showcases skills in containerized tool design, document automation, reproducible environments,
       and template-driven document generation for professional use cases.
@@ -202,7 +205,7 @@ technical_writing:
       and connections to probabilistic modeling and matrix algebra.
       Typeset using the Typst markup framework, with custom styling and layout configurations to optimize
       readability and visual structure.
-      Available at: \href{https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf}{PDF}
+      Available at: [PDF](https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf)
 
   - title: Stochastic Calculus & Options Pricing Notes
     organization: Personal Project
@@ -214,4 +217,4 @@ technical_writing:
       Black-Scholes PDE derivation, no-arbitrage pricing theory, put-call parity, and the connection
       between the Black-Scholes equation and the heat equation.
       Typeset in Typst with customized formatting to support clean mathematical layout and notation.
-      Available at: \href{https://rayhagimoto.github.io/stochastic-calculus-notes/stochastic_calculus.pdf}{PDF}
+      Available at: [PDF](https://rayhagimoto.github.io/stochastic-calculus-notes/stochastic_calculus.pdf)

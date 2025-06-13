@@ -17,12 +17,14 @@
 \RequirePackage{microtype}
 \DisableLigatures{encoding = *, family = *}
 \pdfgentounicode=1
+\renewcommand{\labelitemi}{\textasteriskcentered} % bullet points use asterisk
 
 % Layout and formatting
 \RequirePackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
 \RequirePackage{enumitem}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{xstring}
+\RequirePackage{xspace}
 \RequirePackage{titlesec}
 \RequirePackage{titling}
 \RequirePackage{mdframed}

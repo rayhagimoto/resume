@@ -1,0 +1,10 @@
+\BLOCK{import 'partials/macros.tex' as macros}
+
+\BLOCK{call macros.BaseSection('TALKS')}
+\begin{itemize}
+  \BLOCK{for item in talks}
+    \item``\VAR{item.title|trim}'', \emph{\VAR{item.organization}}%
+    \VAR{ ", " + item.date if item is defined and 'date' in item else '' }%
+    \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endcall}

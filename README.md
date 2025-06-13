@@ -22,50 +22,95 @@ A LaTeX-based resume builder that generates professional PDF resumes from a YAML
 
 ## 📄 Configuration Overview
 
-Resume content is defined in a `YAML` file (`content.yaml`) and rendered using Jinja2.
+Resume content is defined in a structured `YAML` file (`content.yaml`). Each section is passed through a Jinja2 template engine, and individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
 
-### Basic Info (Header)
+---
+
+### ✅ Format and Rendering Flow
+
+1. **Write content** in `YAML` format, using Markdown-style strings for formatting.
+2. **Each section** (e.g., `education`, `experience`) corresponds to a Jinja2 template in [src/sections](src/sections).
+3. **Markdown strings** are automatically converted to LaTeX using `pandoc`.
+4. **LaTeX templates** (e.g., `macros.tex`) render this content into a PDF using `latexmk`.
+
+You may write your resume in clean, readable YAML with light formatting, while still gaining full LaTeX output fidelity.
+
+---
+
+### 🔤 Supported Markdown Formatting
+
+Pandoc supports most inline Markdown. You may also include raw LaTeX.
+
+| Input (YAML)                        | Renders as (LaTeX)                     |
+| ----------------------------------- | -------------------------------------- |
+| `"**Bold** and *italic*"`           | `\textbf{Bold} and \textit{italic}`    |
+| `"This is \\LaTeX{} code"`          | `This is \LaTeX{}`                     |
+| `"Use [link](https://example.com)"` | `Use \href{https://example.com}{link}` |
+| `"Ends with sentence.  "`           | Adds proper spacing in LaTeX           |
+
+---
+
+### 👤 Basic Info (Header)
 
 ```yaml
 profile:
-  name: Ray Hagimoto
-  title: Computational Physicist
+  name: Jane Doe
+  title: Awesome job title
   phone: (123) 456-7890
-  email: ray@example.com
-  location: Houston, TX
-  linkedin: https://linkedin.com/in/rayhagimoto
-  website: https://rayhagimoto.dev
+  email: janedoe@example.com
+  location: City, ST
+  linkedin: https://linkedin.com/in/janedoe
+  website: https://janedoe.me
 ```
 
-### Supported Sections
+This section is rendered using `\renewcommand` and the `\MakeHeader` macro in LaTeX.
 
-* `profile`: Basic header info (rendered at top)
-* `education`
-* `experience`
-* `skills`
-* `leadership`
-* `awards`
+---
 
-Each section is optional and rendered via modular Jinja2 templates in `src/sections/`.
-
-### Section Format Example: `education`
+### 🎓 Section Example: `education`
 
 ```yaml
 education:
-  - organization: Rice University
-    title: Doctor of Philosophy in Physics
-    location: Houston, TX
+  - organization: Prestige University
+    title: Doctor of Philosophy in [Your Subject]
+    location: City, ST
     dates: Aug 2020 – Dec 2024
     bullets:
-      - Coursework includes computational physics (Python), probability theory, and quantum field theory.
+      - I studied **bold-faced useful skill**.
   - organization: UTSA
-    title: Bachelor of Science in Physics
-    location: San Antonio, TX
+    title: Bachelor of Science in [Your Subject]
+    location: City, ST
     dates: Aug 2016 – May 2020
     bullets:
-      - Coursework includes linear algebra, calculus, and classical mechanics.
+      - _Italicized skill_.
 ```
 
+Each entry (marked by `-`) is passed to a Jinja2 macro called `BaseEntry`, then rendered into a `TightFrame` block for layout consistency.
+
+---
+
+### 💼 Section Example: `experience`
+
+```yaml
+experience:
+  - organization: Company Name
+    title: Quantitative Research Intern
+    location: City, ST
+    dates: Summer 2023
+    bullets:
+      - Built a trading strategy with **Sharpe ratio > 1,000,000**.
+      - Collaborated with traders to improve model risk metrics.
+      - Documented workflows using \LaTeX{} and Markdown syntax.
+```
+
+---
+
+### 🧠 Tips for Authors
+
+* You may mix raw LaTeX (e.g., `\LaTeX{}`) and Markdown (e.g., `**bold**`) in the same string.
+* Sentence endings followed by double spaces (`.  `) will properly trigger LaTeX spacing.
+* Trailing and leading whitespace is trimmed automatically during rendering.
+* If both `bullets` and `description` are provided in a section item, `bullets` will appear first.
 ---
 
 ## 🧱 Project Structure
@@ -141,9 +186,11 @@ Each section is enclosed in a `\begin{TightFrame}` block to avoid section-title 
 * Plaintext-friendly PDF
 * Standard UTF-8 encoding
 * Clean structure, no hidden formatting
-* Bullet points copy cleanly
+* Bullet points copy cleanly as `*`
+* Hyphens rendered as `-` instead of en/em-dashes or `--`
 
-This accomplished using the following setup:
+This is accomplished using the following setup:
+
 ```latex
 % Unicode-safe font and encoding
 \RequirePackage[utf8]{inputenc}
@@ -154,7 +201,12 @@ This accomplished using the following setup:
 \pdfgentounicode=1
 ```
 
-You can check the plain text by opening up the PDF, selecting the whole document, then copying and pasting into a text editor. You should find that the layout is preserved, bullet points render as unicode characters, and there are no special characters or incorrectly interpreted symbols.
+Additionally, a postprocessing step ensures:
+
+* All en-dashes (`–`), em-dashes (`—`), and LaTeX `--` sequences are replaced with a simple hyphen (`-`) for clean copy-pasting
+* Bullet points are explicitly rendered as `*` using `\textasteriskcentered{}` in LaTeX
+
+You can verify the result by copying the entire PDF content into a plain text editor. The layout should be preserved, all symbols recognizable, and no ligature or dash substitutions that would confuse an ATS parser.
 
 ---
 

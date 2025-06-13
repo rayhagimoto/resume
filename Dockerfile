@@ -1,16 +1,14 @@
 FROM python:3.12-slim
 
-# Install LaTeX and dependencies
+# Install LaTeX, Pandoc, and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-latex-base \
-    texlive-fonts-recommended \
-    texlive-fonts-extra \
+    texlive-latex-recommended \
     texlive-latex-extra \
     lmodern \
-    texlive-science \
-    texlive-plain-generic \
-    texlive-lang-english \
     latexmk \
+    pandoc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -22,8 +20,8 @@ COPY requirements.txt .
 # Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy everything else
+# Copy the rest of the project
 COPY . .
 
-# Run script
+# Default command to build the resume
 CMD ["python", "compile_resume.py"]
