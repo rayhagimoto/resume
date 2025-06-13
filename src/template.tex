@@ -34,11 +34,13 @@
   \BoldBeforeComma{\VAR{edu.university}} & \VAR{edu.dates} \\
   \textit{\VAR{edu.degree}\BLOCK{if edu.gpa} (GPA: \VAR{edu.gpa})\BLOCK{endif}} &
 \end{tabular*}%
+\BLOCK{if edu.bullets}
 \begin{itemize}
   \BLOCK{for bullet in edu.bullets}
   \item \textit{\VAR{bullet}}
   \BLOCK{endfor}
 \end{itemize}
+\BLOCK{endif}
 \vspace{0.5em}
 \BLOCK{endfor}
 
@@ -53,11 +55,13 @@
   \BoldBeforeComma{\VAR{exp.title}} & \VAR{exp.dates} \\
   \textit{\VAR{exp.organization}}, \VAR{exp.location} &
 \end{tabular*}%
+\BLOCK{if exp.bullets}
 \begin{itemize}
 \BLOCK{for bullet in exp.bullets}
 \item \VAR{bullet}
 \BLOCK{endfor}
 \end{itemize}
+\BLOCK{endif}
 \vspace{0.5em}
 \BLOCK{endfor}
 
@@ -69,11 +73,13 @@
   \BoldBeforeComma{\VAR{lead.title}} & \VAR{lead.dates} \\
   \textit{\VAR{lead.organization}}, \VAR{lead.location}
 \end{tabular*}%
+\BLOCK{if lead.bullets}
 \begin{itemize}
   \BLOCK{for bullet in lead.bullets}
   \item \VAR{bullet}
   \BLOCK{endfor}
 \end{itemize}
+\BLOCK{endif}
 \vspace{0.5em}
 \BLOCK{endfor}
 
