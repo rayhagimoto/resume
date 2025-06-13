@@ -162,7 +162,7 @@ technologies:
   platforms: 'HPC/SLURM, cloud computing'
 
 projects:
-  - title: Automated wildlife detection \& alert system using AWS and OpenCV
+  - title: Automated wildlife detection and alert system using AWS and OpenCV
     organization: Personal Project
     location: Remote
     dates: '2024'
@@ -207,7 +207,7 @@ technical_writing:
       readability and visual structure.
       Available at: [PDF](https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf)
 
-  - title: Stochastic Calculus & Options Pricing Notes
+  - title: Stochastic Calculus and Options Pricing Notes
     organization: Personal Project
     location: Remote
     dates: '2024'
