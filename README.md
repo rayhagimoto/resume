@@ -61,7 +61,7 @@ Each section follows a specific format as shown in the example `content.yaml` fi
 
 This resume template organizes each section (e.g. Education, Experience, Projects) into an `mdframed` block to **prevent section titles from being visually separated from their content**.
 
-The content is populated by using a Python script to interpret the `content.yaml`, then create the LaTeX source code using `jinja2` templating. The `jinja2` template can be found at [resume_template.tex](src/resume_template.tex). 
+The content is populated by using a Python script to interpret the `content.yaml`, then create the LaTeX source code using `jinja2` templating. The `jinja2` template can be found at [template.tex](src/template.tex). 
 Most of the sections are styled using the `\BaseSection` and `\BaseEntry` LaTeX macros which are defined in [styles.cls](src/styles.cls).
 
 Here's an example of how the `education:` section is defined in YAML:
