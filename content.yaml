@@ -1,8 +1,17 @@
+sections:
+  - profile
+  - education
+  - skills
+  - experience
+  - leadership
+  - awards
+  - projects
+
 target_company: 
-candidate:
+profile:
   name: Ray Hagimoto
   title: 'Computational Physicist'  # Test GitHub Actions workflow
-  summary: |
+  description: |
     Computational physics PhD with 5 years of data analysis and Python programming experience.
     Seeking quantitatively complex challenges in industry.
     Experienced with Monte Carlo simulations and statistical inference on real data.
@@ -14,16 +23,16 @@ candidate:
   github: null  # Add if desired
 
 education:
-  - university: Rice University
+  - organization: Rice University
+    title: Doctor of Philosophy in Physics
     location: Houston, TX
-    degree: Doctor of Philosophy in Physics
     dates: Aug 24 2020 – Dec 10 2024
     gpa: 3.90
     bullets: 
       - Coursework includes computational physics (Python), probability theory, and quantum field theory.
-  - university: University of Texas at San Antonio
+  - organization: University of Texas at San Antonio
+    title: Bachelor of Science in Physics
     location: San Antonio, TX
-    degree: Bachelor of Science in Physics
     dates: Aug 22 2016 – May 23 2020
     gpa: 4.00
     bullets: 
@@ -95,28 +104,28 @@ leadership:
 
 talks:
   - title: Extracting Axion String Network Parameters from Simulated CMB Birefringence Maps using Convolutional Neural Networks
-    venue: Tohoku University invited seminar
-    year: 2025
+    organization: Tohoku University invited seminar
+    date: Summer 2025
 
   - title: CMB birefringence from cosmic axion strings
-    venue: Pheno 2023
-    year: 2023
+    organization: Pheno 2023
+    date: Summer 2023
 
   - title: Non-Gaussianity in the CMB from cosmic axion strings
-    venue: Astronomy Seminar, Spring
-    year: 2023
+    organization: Astronomy Seminar
+    date: Spring 2023
 
   - title: Measures of non-Gaussianity in axion-string induced birefringence
-    venue: Astronomy Seminar, Fall
-    year: 2023
+    organization: Astronomy Seminar
+    date: Fall 2023
 
   - title: CMB Birefringence, Power Spectra, and Estimators
-    venue: Astronomy Seminar, Fall
-    year: 2022
+    organization: Astronomy Seminar
+    date: Fall 2022
 
   - title: Looking for cosmic axion strings in CMB data
-    venue: Astronomy Seminar, Spring
-    year: 2022
+    organization: Astronomy Seminar
+    date: Spring 2022
 
 awards:
   - NSF Graduate Research Fellowship Award Honorable Mention (2021)
@@ -150,7 +159,10 @@ technologies:
   platforms: 'HPC/SLURM, cloud computing'
 
 projects:
-  - title: Automated wildlife detection & alert system using AWS and OpenCV
+  - title: Automated wildlife detection \& alert system using AWS and OpenCV
+    organization: Personal Project
+    location: Remote
+    dates: '2024'
     description: |
       Designed and deployed a real-time anomaly detection pipeline using AWS Lambda, S3, and OpenCV
       to identify bird or squirrel appearances via camera trap images.
@@ -163,7 +175,10 @@ projects:
       Connected a Telegram bot to push annotated image alerts in real time (within seconds).
       Gained experience in cloud-native CV deployment, event-driven architecture, and end-to-end ML
       pipeline robustness testing.
-  - title: Automated resume writer (in progress)
+  - title: Automated resume writer
+    organization: Personal Project
+    location: Remote
+    dates: '2024'
     description: |
       Building a containerized resume generation tool that compiles YAML-formatted resume content into
       a clean, ATS-compatible PDF using a LaTeX template and `latexmk`.
@@ -178,6 +193,9 @@ projects:
 
 technical_writing:
   - title: Linear Regression Notes
+    organization: Personal Project
+    location: Remote
+    dates: '2024'
     description: |
       Authored a mathematically rigorous set of notes covering the foundations of linear regression,
       including derivations of the OLS estimator, statistical assumptions, inference under Gauss-Markov conditions,
@@ -187,9 +205,12 @@ technical_writing:
       Available at: \href{https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf}{PDF}
 
   - title: Stochastic Calculus & Options Pricing Notes
+    organization: Personal Project
+    location: Remote
+    dates: '2024'
     description: |
       Developed a comprehensive guide to the mathematical foundations of stochastic calculus with
-      applications to quantitative finance. Topics include Ito’s Lemma, geometric Brownian motion,
+      applications to quantitative finance. Topics include Ito's Lemma, geometric Brownian motion,
       Black-Scholes PDE derivation, no-arbitrage pricing theory, put-call parity, and the connection
       between the Black-Scholes equation and the heat equation.
       Typeset in Typst with customized formatting to support clean mathematical layout and notation.
