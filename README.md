@@ -62,15 +62,62 @@ Each section follows a specific format as shown in the example `content.yaml` fi
 ### Using Docker (Recommended)
 
 1. Make sure Docker is installed on your system
-2. Run the build script:
+2. Run the build script with your desired options:
 ```bash
+# Basic usage (uses content.yaml in current directory)
 ./build.sh
+
+# Specify a custom content.yaml location
+./build.sh /path/to/your/content.yaml
+
+# Specify a custom output directory
+./build.sh --output-dir /path/to/output /path/to/your/content.yaml
+
+# Specify a custom output filename
+./build.sh --filename my_resume.pdf /path/to/your/content.yaml
+
+# Force overwrite existing files without prompting
+./build.sh -y /path/to/your/content.yaml
+
+# Combine multiple options
+./build.sh -y --output-dir /path/to/output --filename my_resume.pdf /path/to/your/content.yaml
 ```
+
+The build script options are:
+- `--output-dir`: Specify a custom output directory (default: `./output`)
+- `--filename`: Specify a custom output filename (default: auto-generated based on name and company)
+- `-y` or `--yes`: Automatically overwrite existing files without prompting
 
 The script will:
 - Build a Docker image with all necessary dependencies
 - Compile your resume
-- Output the PDF to the `output` directory
+- Output the PDF to the specified directory (or `output` by default)
+- Prompt for confirmation before overwriting existing files (unless `-y` is used)
+
+### Using as a Submodule
+
+You can include this repository as a submodule in your own project to maintain your resume content separately:
+
+1. Add the repository as a submodule:
+```bash
+git submodule add https://github.com/rayhagimoto/resume.git
+```
+
+2. Create your `content.yaml` in your project's root directory:
+```bash
+touch content.yaml
+```
+
+3. Build your resume using the submodule's build script:
+```bash
+./resume/build.sh ../content.yaml
+```
+
+This setup allows you to:
+- Keep your resume content in your own repository
+- Update the resume builder independently
+- Maintain multiple content files for different purposes
+- Use the resume builder in multiple projects
 
 ### Local Development
 
