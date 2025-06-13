@@ -8,7 +8,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 IMAGE_NAME=resume-builder
 CONTAINER_NAME=resume-container
 DEFAULT_OUTPUT_DIR="$SCRIPT_DIR/output"
-CONTENT_FILE="content.yaml"
+CONTENT_FILE="$SCRIPT_DIR/content.yaml"
 OUTPUT_DIR=""
 FILENAME=""
 FORCE=false
@@ -69,7 +69,7 @@ fi
 if [ -z "$FILENAME" ]; then
     # Create a temporary container to get the default filename
     TEMP_CONTAINER="temp-filename-extractor"
-    docker run --name "$TEMP_CONTAINER" \
+    docker run --rm --name "$TEMP_CONTAINER" \
         -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
         "$IMAGE_NAME" \
         python3 -c "
@@ -87,7 +87,7 @@ TEMP_OUTPUT_DIR="$SCRIPT_DIR/temp_output"
 mkdir -p "$TEMP_OUTPUT_DIR"
 
 # Build the docker run command
-DOCKER_CMD="docker run --name $CONTAINER_NAME \
+DOCKER_CMD="docker run --rm --name $CONTAINER_NAME \
   -e OUTPUT_DIR=/app/temp_output \
   -v $TEMP_OUTPUT_DIR:/app/temp_output \
   -v $ABSOLUTE_CONTENT_PATH:/app/content.yaml \
