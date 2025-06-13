@@ -52,8 +52,19 @@ def render_latex(content_file='content.yaml'):
     return content
 
 def compile_pdf(resume_name, output_dir):
-    # Compile LaTeX with latexmk inside src/
-    subprocess.run(["latexmk", "-pdf", "main.tex"], cwd="src", check=True)
+    try:
+        # Compile LaTeX with latexmk inside src/
+        subprocess.run(["latexmk", "-pdf", "main.tex"], cwd="src", check=True)
+    except subprocess.CalledProcessError as e:
+        # If compilation fails, read and display the log file
+        log_file = os.path.join("src", "main.log")
+        if os.path.exists(log_file):
+            with open(log_file, 'r') as f:
+                print("\nLaTeX Error Log:")
+                print("=" * 80)
+                print(f.read())
+                print("=" * 80)
+        raise e
 
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
