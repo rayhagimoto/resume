@@ -1,0 +1,13 @@
+\BLOCK{import 'partials/macros.tex' as macros}
+
+\BLOCK{call macros.BaseSection('EDUCATION')}
+  \BLOCK{for item in education}
+    \VAR{macros.BaseEntry(
+      item.organization,
+      item.dates,
+      item.title,
+      item.location,
+      macros.AddBullets(item.bullets) if item.bullets else ""
+    )}
+  \BLOCK{endfor}
+\BLOCK{endcall}

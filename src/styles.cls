@@ -1,6 +1,9 @@
 %==========================================================
 % styles.cls — ATS-compatible Custom Resume Class
 %==========================================================
+% Contains:
+% Font, spacing, margins, enumitem setup, no logic/macros
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{styles}[2025/06/12 ATS-safe resume class]
 
@@ -121,63 +124,4 @@ leftmargin=1em
   \ifx\relax#2\relax
   \else ,#2
   \fi
-}
-
-%----------------------------------------------------------
-% === BASE SECTION MACROS ===
-%----------------------------------------------------------
-% Base section command for standard layout
-\newcommand{\BaseSection}[2]{%
-    % #1 = section title
-    % #2 = section content
-    \begin{TightFrame}
-      \section{#1}
-      #2
-    \end{TightFrame}
-}
-
-\newcommand{\BaseEntry}[5]{%
-    % #1 = Bold text[comma] (use for titles or university)
-    % #2 = dates (right-aligned, on same line as #1)
-    % #3 = Italics on new line under #1 and #2 (use for degree title, organization name)
-    % #4 = location
-    % #5 = content
-    \begin{TightFrame}
-      \makebox[0pt][l]{%
-        \parbox{\linewidth}{%
-          \BoldBeforeComma{#1}%
-          \hfill
-          #2\\%
-          \textit{#3\ifx\empty#4\empty\else, #4\fi}%
-          \begin{TightFrame}
-            #5
-          \end{TightFrame}
-        }%
-      }%
-    \end{TightFrame}%
-}
-
-% Add bullets to an entry
-\newcommand{\AddBullets}[1]{%
-    \begin{itemize}[leftmargin=1em]
-        #1
-    \end{itemize}%
-}
-
-% Add description to an entry
-\newcommand{\AddDescription}[1]{%
-    % \noindent#1%
-    #1%
-    \vspace{0.5em}%
-}
-
-
-\newcommand{\SkillsEntry}[1]{%
-    \noindent{\textbf{Skills:}} #1
-}
-
-\newcommand{\AwardsEntry}[1]{%
-    \begin{itemize}
-        #1
-    \end{itemize}
 }
