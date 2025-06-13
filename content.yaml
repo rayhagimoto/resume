@@ -15,15 +15,17 @@ candidate:
 
 education:
   - university: Rice University
+    location: Houston, TX
     degree: Doctor of Philosophy in Physics
     dates: Aug 24 2020 – Dec 10 2024
     gpa: 3.90
-    comments: Coursework includes computational physics (Python), probability theory, and quantum field theory.
+    bullets: Coursework includes computational physics (Python), probability theory, and quantum field theory.
   - university: University of Texas at San Antonio
+    location: San Antonio, TX
     degree: Bachelor of Science in Physics
     dates: Aug 22 2016 – May 23 2020
     gpa: 4.00
-    comments: Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.
+    bullets: Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.
 
 skills:
   - Python
