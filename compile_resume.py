@@ -9,7 +9,7 @@ import shutil
 
 def get_default_filename(content):
     """Get the default filename based on content.yaml data."""
-    candidate_name = content["candidate"]["name"].replace(" ", "_")
+    candidate_name = content["profile"]["name"].replace(" ", "_")
     target_company = content.get("target_company", "")
     target_company = None if target_company in [None, "", "None"] else target_company.replace(" ", "")
     
@@ -39,8 +39,8 @@ def render_latex(content_file='content.yaml'):
     )
 
     # Render template
-    template = env.get_template('template.tex')
-    output = template.render(**content)
+    template = env.get_template('resume_template.tex')
+    output = template.render(content)
 
     # Ensure src/ exists
     os.makedirs('src', exist_ok=True)
