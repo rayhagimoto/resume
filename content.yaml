@@ -5,7 +5,7 @@ sections:
   - experience
   - leadership
   - awards
-  - projects
+  # - projects
 
 target_company: 
 profile:
@@ -181,7 +181,7 @@ projects:
     dates: '2024'
     description: |
       Building a containerized resume generation tool that compiles YAML-formatted resume content into
-      a clean, ATS-compatible PDF using a LaTeX template and `latexmk`.
+      a clean, ATS-compatible PDF using a \LaTeX template and \texttt{latexmk}.
       Designed for cross-platform reproducibility and consistent rendering via a Dockerized build pipeline.
       Users define content modularly in YAML, enabling structured sections that can be swapped or extended;
       while not fully toggle-based, the layout supports flexible customization through LaTeX template editing.
