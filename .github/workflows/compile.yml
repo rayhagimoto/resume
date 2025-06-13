@@ -23,11 +23,22 @@ jobs:
 
       - name: Run resume build in Docker
         run: |
+          # Create a temporary output directory
+          mkdir -p temp_output
+          
+          # Run the container with the temporary output directory
           docker run --name resume-container \
-            -e OUTPUT_DIR=output \
-            -v ${{ github.workspace }}/output:/app/output \
-            resume-builder python3 compile_resume.py
+            -e OUTPUT_DIR=/app/temp_output \
+            -v ${{ github.workspace }}/temp_output:/app/temp_output \
+            -v ${{ github.workspace }}/content.yaml:/app/content.yaml \
+            resume-builder python3 compile_resume.py --content content.yaml
+          
+          # Move the output to the final location
+          mv temp_output/* output/ || true
+          
+          # Clean up
           docker rm -f resume-container || true
+          rm -rf temp_output
 
       - name: List outputs
         run: ls -l output
