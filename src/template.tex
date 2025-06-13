@@ -35,7 +35,9 @@
   \textit{\VAR{edu.degree}\BLOCK{if edu.gpa} (GPA: \VAR{edu.gpa})\BLOCK{endif}} &
 \end{tabular*}%
 \begin{itemize}
-  \item \textit{\VAR{edu.comments}}
+  \BLOCK{for bullet in edu.bullets}
+  \item \textit{\VAR{bullet}}
+  \BLOCK{endfor}
 \end{itemize}
 \vspace{0.5em}
 \BLOCK{endfor}
