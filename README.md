@@ -47,15 +47,83 @@ These sections are fully supported in the current template:
 - `experience`: Work experience entries
 - `leadership`: Leadership roles and responsibilities
 - `awards`: Achievements and recognitions
+- `projects`: Personal or professional projects
 
 #### Planned Sections (Not Yet Implemented)
 These sections are defined in the YAML but not yet rendered in the template:
 - `talks`: Presentations and speaking engagements
 - `coursework`: Relevant academic courses
 - `technologies`: Technical skills breakdown
-- `projects`: Personal or professional projects
 
 Each section follows a specific format as shown in the example `content.yaml` file. The template is designed to be modular, allowing for easy addition of new sections in the future.
+
+#### 📦 Custom Sections
+
+This resume template organizes each section (e.g. Education, Experience, Projects) into an `mdframed` block. The reason is to **prevent section titles from being visually separated from their content** — a common issue with page breaks in LaTeX.
+
+Each section reads from a `content.yaml` file and loops over the entries using a custom LaTeX macro called `\BaseEntry`.
+
+Here's an example of how the `education:` section is defined in YAML:
+
+```yaml
+education:
+  - organization: Rice University
+    title: Doctor of Philosophy in Physics
+    location: Houston, TX
+    dates: Aug 24 2020 – Dec 10 2024
+    gpa: 3.90
+    bullets: 
+      - Coursework includes computational physics (Python), probability theory, and quantum field theory.
+  - organization: University of Texas at San Antonio
+    title: Bachelor of Science in Physics
+    location: San Antonio, TX
+    dates: Aug 22 2016 – May 23 2020
+    gpa: 4.00
+    bullets: 
+      - Coursework includes mathematics (linear algebra; calculus I, II, III) and advanced physics.
+```
+
+The LaTeX macro used to render each entry is:
+
+```latex
+\BaseEntry{#1}{#2}{#3}{#4}{#5}
+```
+
+Where:
+- `#1`: Appears **bolded**, top-left (e.g. job title or degree)
+- `#2`: Appears **top-right**, same line (e.g. date range)
+- `#3`: Appears in *italics* beneath, left-aligned (e.g. organization or university)
+- `#4`: Appended to `#3` after a comma (e.g. location); omitted if empty
+- `#5`: Optional additional content (e.g. bullets or description), placed in a nested `TightFrame`
+
+---
+
+#### ✨ Rendered Example
+
+This YAML entry:
+
+```yaml
+- organization: Susquehanna International Group
+  title: Quantitative Researcher PhD Intern
+  location: Bala Cynwyd, PA
+  dates: June 2024 – Aug 2024
+  bullets:
+    - Built real-time market simulator in C++ and Python
+```
+
+Will render approximately as:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│ Quantitative Researcher PhD Intern             June 2024 – Aug 2024 │
+│ *Susquehanna International Group, Bala Cynwyd, PA*                 │
+│   • Built real-time market simulator in C++ and Python             │
+└────────────────────────────────────────────────────────────┘
+```
+
+> Note: The box outline is not printed if you're using the `TightFrame` environment with no border (`linewidth=0pt`).
+
+
 
 ## Building the Resume
 
