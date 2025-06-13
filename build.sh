@@ -68,8 +68,7 @@ fi
 # If no filename is specified, get it from compile_resume.py
 if [ -z "$FILENAME" ]; then
     # Create a temporary container to get the default filename
-    TEMP_CONTAINER="temp-filename-extractor"
-    docker run --rm --name "$TEMP_CONTAINER" \
+    FILENAME=$(docker run --rm \
         -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
         "$IMAGE_NAME" \
         python3 -c "
@@ -77,9 +76,7 @@ from compile_resume import get_default_filename
 import yaml
 content = yaml.safe_load(open('content.yaml'))
 print(get_default_filename(content))
-"
-    FILENAME=$(docker logs "$TEMP_CONTAINER")
-    docker rm -f "$TEMP_CONTAINER" >/dev/null
+")
 fi
 
 # Create a temporary output directory for the Docker container
