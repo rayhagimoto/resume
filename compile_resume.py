@@ -156,7 +156,8 @@ def main():
     args = parser.parse_args()
     output_dir = args.output_dir
 
-    if args.filename:
+    filename = args.filename
+    if filename:
         filename = args.filename.strip().strip(".pdf") + ".pdf"
 
     content = render_latex(args.content)
