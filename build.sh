@@ -1,11 +1,9 @@
 #!/bin/bash
 set -e
 
-# Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Default values
-IMAGE_NAME=resume-builder
+IMAGE_NAME=rayhagimoto-resume-builder
 CONTAINER_NAME=resume-container
 DEFAULT_OUTPUT_DIR="$SCRIPT_DIR/output"
 CONTENT_FILE="$SCRIPT_DIR/content.yaml"
@@ -13,7 +11,22 @@ OUTPUT_DIR=""
 FILENAME=""
 FORCE=false
 
-# Parse command line arguments
+print_help() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --content PATH        Path to content.yaml (default: ./content.yaml)"
+    echo "  --output-dir DIR      Directory to save the output PDF (default: ./output)"
+    echo "  --filename NAME       Output PDF filename (default determined from content)"
+    echo "  -y, --yes             Overwrite output without prompting"
+    echo "  --help                Show this help message and exit"
+    echo ""
+    echo "Example:"
+    echo "  $0 --content cv.yaml --output-dir ./tmp --filename resume.pdf"
+}
+
+
+# Parse CLI args
 while [[ $# -gt 0 ]]; do
     case $1 in
         --output-dir)
@@ -24,50 +37,46 @@ while [[ $# -gt 0 ]]; do
             FILENAME="$2"
             shift 2
             ;;
+        --content)
+            CONTENT_FILE="$2"
+            shift 2
+            ;;
         -y|--yes)
             FORCE=true
             shift
             ;;
+        --help)
+            print_help
+            exit 0
+            ;;
         *)
-            CONTENT_FILE="$1"
-            shift
+            echo "Unknown argument: $1"
+            echo "Use --help to see available options."
+            exit 1
             ;;
     esac
 done
 
-# Set default output directory if not specified
+
+
+# Set default output dir
 if [ -z "$OUTPUT_DIR" ]; then
     OUTPUT_DIR="$DEFAULT_OUTPUT_DIR"
 fi
-
-# Clean up old container if it exists
-docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
-
-# Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
 
-# Build Docker image from the script directory
+# Build Docker image
 docker build -t "$IMAGE_NAME" "$SCRIPT_DIR"
 
-# Get the absolute path of the content file
-if [[ "$CONTENT_FILE" == /* ]]; then
-    # If it's already an absolute path, use it as is
-    ABSOLUTE_CONTENT_PATH="$CONTENT_FILE"
-else
-    # If it's a relative path, make it absolute relative to the current working directory
-    ABSOLUTE_CONTENT_PATH="$(cd "$(dirname "$CONTENT_FILE")" && pwd)/$(basename "$CONTENT_FILE")"
-fi
+# Resolve absolute paths
+ABSOLUTE_CONTENT_PATH="$(realpath "$CONTENT_FILE")"
+ABSOLUTE_OUTPUT_PATH="$(realpath "$OUTPUT_DIR")"
 
-# Get the absolute path of the output directory
-if [[ "$OUTPUT_DIR" == /* ]]; then
-    ABSOLUTE_OUTPUT_PATH="$OUTPUT_DIR"
+# If filename is specified, sanitize it: trim whitespace, remove ".pdf" (if present), and re-append ".pdf"
+if [ -n "$FILENAME" ]; then
+    FILENAME="$(echo "$FILENAME" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/\.pdf$//').pdf"
 else
-    ABSOLUTE_OUTPUT_PATH="$(cd "$(dirname "$OUTPUT_DIR")" && pwd)/$(basename "$OUTPUT_DIR")"
-fi
-
-# If no filename is specified, get it from compile_resume.py
-if [ -z "$FILENAME" ]; then
-    # Create a temporary container to get the default filename
+    # Get default filename from container
     FILENAME=$(docker run --rm \
         -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
         "$IMAGE_NAME" \
@@ -79,48 +88,35 @@ print(get_default_filename(content))
 ")
 fi
 
-# Create a temporary output directory for the Docker container
-TEMP_OUTPUT_DIR="$SCRIPT_DIR/temp_output"
-mkdir -p "$TEMP_OUTPUT_DIR"
+# Remove old container if exists
+docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
-# Build the docker run command
-DOCKER_CMD="docker run --rm --name $CONTAINER_NAME \
-  -e OUTPUT_DIR=/app/temp_output \
-  -v $TEMP_OUTPUT_DIR:/app/temp_output \
-  -v $ABSOLUTE_CONTENT_PATH:/app/content.yaml \
-  $IMAGE_NAME \
-  python3 compile_resume.py --content content.yaml --filename $FILENAME"
+# Start a container that builds resume inside and leaves output in /tmp/final.pdf
+docker run --name "$CONTAINER_NAME" \
+    -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
+    "$IMAGE_NAME" \
+    bash -c "
+        python3 compile_resume.py --content content.yaml --filename $FILENAME --output-dir=/tmp
+    "
 
-# Run the container
-eval $DOCKER_CMD
-
-# Clean up the container
-docker rm -f "$CONTAINER_NAME" >/dev/null
-
-# Check if the output file exists and handle overwrite warning
+# Determine final path
 FINAL_OUTPUT_PATH="$ABSOLUTE_OUTPUT_PATH/$FILENAME"
+
+# Check overwrite
 if [ -f "$FINAL_OUTPUT_PATH" ]; then
     if [ "$FORCE" = true ]; then
         echo "Overwriting existing file: $FINAL_OUTPUT_PATH"
     else
-        echo "Warning: File $FINAL_OUTPUT_PATH already exists and will be overwritten."
-        read -p "Do you want to continue? [y/N] " response
-        if [[ ! "$response" =~ ^[Yy]$ ]]; then
-            echo "Operation cancelled."
-            rm -rf "$TEMP_OUTPUT_DIR"
-            exit 1
-        fi
+        echo "Warning: $FINAL_OUTPUT_PATH already exists."
+        read -p "Overwrite? [y/N] " resp
+        [[ ! "$resp" =~ ^[Yy]$ ]] && echo "Cancelled." && exit 1
     fi
-else
-    echo "File not found, will create: $FINAL_OUTPUT_PATH"
 fi
 
-# Move the file from temporary directory to final location
-mv "$TEMP_OUTPUT_DIR/$FILENAME" "$FINAL_OUTPUT_PATH"
+# Copy the built PDF from container
+docker cp "$CONTAINER_NAME:/tmp/$FILENAME" "$FINAL_OUTPUT_PATH"
+docker rm -f "$CONTAINER_NAME" >/dev/null
 
-# Clean up temporary directory
-rm -rf "$TEMP_OUTPUT_DIR"
-
-# List the result
-echo "✅ Resume has been built successfully as $FILENAME in $OUTPUT_DIR:"
-ls "$OUTPUT_DIR"
+# Done
+echo "✅ Resume built successfully: $FINAL_OUTPUT_PATH"
+ls -lh "$FINAL_OUTPUT_PATH"

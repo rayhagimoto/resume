@@ -17,7 +17,10 @@
 \RequirePackage{microtype}
 \DisableLigatures{encoding = *, family = *}
 \pdfgentounicode=1
+\pdfinclusioncopyfonts=1
 \renewcommand{\labelitemi}{\textasteriskcentered} % bullet points use asterisk
+\AtBeginDocument{\RaggedRight}
+
 
 % Layout and formatting
 \RequirePackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in]{geometry}
@@ -28,6 +31,7 @@
 \RequirePackage{titlesec}
 \RequirePackage{titling}
 \RequirePackage{mdframed}
+\RequirePackage{ragged2e}
 
 %----------------------------------------------------------
 % Section formatting
@@ -74,7 +78,8 @@ leftmargin=1em
   innerbottommargin=0pt,
   skipabove=0.5em,
   skipbelow=0em,
-  nobreak=true
+  nobreak=true,
+  font=\RaggedRight
 ]{TightFrame}
 
 %----------------------------------------------------------

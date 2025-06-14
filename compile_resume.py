@@ -10,10 +10,11 @@ from pathlib import Path
 import pypandoc
 
 
-BUILD_DIR = "build"
 ROOT = Path(__file__).parent.resolve()
+BUILD_DIR = ROOT / "build"
 SRC_DIR = ROOT / "src"
-OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
+BIB_DIR = ROOT / "bibstyles"
+SKIP_FIELDS = {'phone', 'location', 'name', 'title'} # Skip these fields in markdown to latex converter.
 
 def get_default_filename(content):
     name = content["profile"]["name"].replace(" ", "_")
@@ -21,24 +22,29 @@ def get_default_filename(content):
     company = company.replace(" ", "") if company and company.lower() != "none" else None
     return f"{name}_Resume_{company}.pdf" if company else f"{name}_Resume.pdf"
 
-def convert_markdown_to_latex(obj):
-    """
-    Recursively convert all string leaves in a nested structure
-    (dict/list/scalar) from Markdown to LaTeX using pypandoc.
-    """
-    if isinstance(obj, str):
-        return pypandoc.convert_text(obj, to='latex', format='markdown').strip()
+def convert_markdown_to_latex(obj, path=None):
+    if path is None:
+        path = []
+
+    if isinstance(obj, dict):
+        return {
+            key: convert_markdown_to_latex(value, path + [key])
+            for key, value in obj.items()
+        }
     elif isinstance(obj, list):
-        return [convert_markdown_to_latex(item) for item in obj]
-    elif isinstance(obj, dict):
-        return {key: convert_markdown_to_latex(value) for key, value in obj.items()}
+        return [convert_markdown_to_latex(item, path + ['<list>']) for item in obj]
+    elif isinstance(obj, str):
+        key = path[-1] if path else ''
+        if key in SKIP_FIELDS:
+            return obj
+        return pypandoc.convert_text(obj, to='latex', format='markdown').strip()
     else:
-        return obj  # Leave ints, floats, bools, etc. unchanged
+        return obj
 
 def render_sections(env, content):
     rendered = []
     for section in content["sections"]:
-        section = section.strip()
+        section = section.strip().replace("/", "").replace("\\","")
         template_path = f"sections/{section}.tex"
         print(f"Accessing at template_path = {template_path}")
         try:
@@ -64,7 +70,9 @@ def render_latex(content_file='content.yaml'):
 
     # Preprocess content to convert all markdown strings to LaTeX
     content = convert_markdown_to_latex(content)
-    print(content['projects'][1])
+    print("Phone no:", content.get('profile', None).get('phone', None))
+
+
 
     # Set up Jinja
     env = jinja2.Environment(
@@ -96,16 +104,27 @@ def render_latex(content_file='content.yaml'):
 
     return content
 
-def compile_pdf(resume_name, output_dir):
+def compile_pdf(resume_name, output_dir, content):
     os.makedirs(BUILD_DIR, exist_ok=True)
 
     # Get absolute paths
-    root_dir = Path(__file__).parent.resolve()
-    src_dir = root_dir / "src"
+    src_dir = (ROOT / "src").resolve()
+    style_dir = (ROOT / "bibstyles").resolve()
+    bib_file = content.get('bibliography', None).replace(".bib", "")
+    bib_style = content.get('bibliographystyle', f"hplain.bst").strip().replace(".bst", "")
+    
+    if bib_file:
+        shutil.copy(ROOT / f"{bib_file}.bib", BUILD_DIR / f"{bib_file}.bib")
+    if bib_style:
+        style_src = (style_dir / f"{bib_style}.bst").resolve()
+        style_dst = (BUILD_DIR / f"{bib_style}.bst").resolve()
+        print(f"Copying bib_style at {str(style_src)} to {str(style_dst)}")
+        shutil.copy(style_src, style_dst)
+
 
     # Set TEXINPUTS to allow LaTeX to find styles.cls in src/
     env = os.environ.copy()
-    env["TEXINPUTS"] = str(src_dir) + os.pathsep
+    env["TEXINPUTS"] = str(src_dir) + os.pathsep + str(style_dir) + os.pathsep + str(ROOT) + os.pathsep
 
     # Then run the subprocess
     subprocess.run(
@@ -133,11 +152,16 @@ def main():
     parser = argparse.ArgumentParser(description="Compile resume from YAML content")
     parser.add_argument('--content', default='content.yaml', help='Path to content.yaml (default: content.yaml)')
     parser.add_argument('--filename', default=None, help='Custom output PDF filename')
+    parser.add_argument('--output-dir', default='output', help='Output directory')
     args = parser.parse_args()
+    output_dir = args.output_dir
+
+    if args.filename:
+        filename = args.filename.strip().strip(".pdf") + ".pdf"
 
     content = render_latex(args.content)
-    resume_name = args.filename or get_default_filename(content)
-    compile_pdf(resume_name, OUTPUT_DIR)
+    resume_name = filename or get_default_filename(content)
+    compile_pdf(resume_name, output_dir, content)
 
 if __name__ == '__main__':
     main()
