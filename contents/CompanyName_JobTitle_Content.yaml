@@ -17,13 +17,13 @@ target_company:
 profile:
   name: 'Ray Hagimoto'
   title: 'Computational Physicist'
-  location: '1024 N Logan Ave, Danville, IL 61832'
-  phone: '830-212-9632'
-  email: 'rayhagimoto@gmail.com'
   description: >
     Computational physics PhD with 5 years of data analysis and Python programming experience.
     Seeking quantitatively complex challenges in industry.
     Experienced with Monte Carlo simulations and statistical inference on real data.
+  location: '1024 N Logan Ave, Danville, IL 61832'
+  phone: '(830) 212-9632'
+  email: 'rayhagimoto@gmail.com'
   website: 'https://rayhagimoto.xyz'
   linkedin: 'https://linkedin.com/in/ray-hagimoto'
   github: 'https://github.com/rayhagimoto' 
@@ -111,7 +111,7 @@ leadership:
 talks:
   - title: 'Extracting Axion String Network Parameters from Simulated CMB Birefringence Maps using Convolutional Neural Networks'
     organization: 'Tohoku University invited seminar'
-    date: 'Summer 2025'
+    # date: Summer 2025
 
   - title: 'CMB birefringence from cosmic axion strings'
     organization: 'Pheno 2023'
@@ -136,8 +136,8 @@ talks:
 awards:
   - 'NSF Graduate Research Fellowship Award Honorable Mention (2021)'
   - 'Rice University Dean''s Fellowship (2020-2024)'
-  - Dean's List, UTSA (2016-2020)
-  - Presidential Scholarship, UTSA (2016-2020)
+  # - Dean's List, UTSA (2016-2020)
+  # - Presidential Scholarship, UTSA (2016-2020)
 
 technologies:
   languages: 'Python, C++, SQL'
@@ -149,18 +149,18 @@ projects:
     organization: 'Personal Project'
     location: 'Remote'
     dates: '2024'
-    description: >
-      Designed and deployed a real-time anomaly detection pipeline using AWS Lambda, S3, and OpenCV
-      to identify bird or squirrel appearances via camera trap images.
-      Built a custom background subtraction algorithm with a running exponential moving average,
-      luminance thresholding, and feature-based contour scoring to detect object-level anomalies
-      based on size, shape, and aspect ratio.
-      Integrated two Lambda functions: one for CV inference and one for secure upload handling via
-      presigned S3 URLs.
-      Used Tasker automation to upload compressed images from an Android device to S3, triggering detection.
-      Connected a Telegram bot to push annotated image alerts in real time (within seconds).
-      Gained experience in cloud-native CV deployment, event-driven architecture, and end-to-end ML
-      pipeline robustness testing.
+    # description: >
+    #   Designed and deployed a real-time anomaly detection pipeline using AWS Lambda, S3, and OpenCV
+    #   to identify bird or squirrel appearances via camera trap images.
+    #   Built a custom background subtraction algorithm with a running exponential moving average,
+    #   luminance thresholding, and feature-based contour scoring to detect object-level anomalies
+    #   based on size, shape, and aspect ratio.
+    #   Integrated two Lambda functions: one for CV inference and one for secure upload handling via
+    #   presigned S3 URLs.
+    #   Used Tasker automation to upload compressed images from an Android device to S3, triggering detection.
+    #   Connected a Telegram bot to push annotated image alerts in real time (within seconds).
+    #   Gained experience in cloud-native CV deployment, event-driven architecture, and end-to-end ML
+    #   pipeline robustness testing.
     bullets:
       - 'Built a cloud-native detection pipeline with AWS, OpenCV for real-time wildlife recognition from a tripod camera.'
       - 'Engineered image differencing with contour scoring, boosting detection accuracy for birds and squirrels.'
@@ -170,17 +170,17 @@ projects:
     organization: '[GitHub: https://github.com/rayhagimoto/resume](https://github.com/rayhagimoto/resume)'
     location: ''
     dates: '2024'
-    description: >
-      Built a containerized resume generation tool that compiles YAML-formatted resume content into
-      a clean, ATS-compatible PDF using a LaTeX template and `latexmk`.
-      Designed for cross-platform reproducibility and consistent rendering via a Dockerized build pipeline.
-      Users define content modularly in YAML, enabling structured sections that can be swapped or extended;
-      while not fully toggle-based, the layout supports flexible customization through LaTeX template editing.
-      The system integrates a custom resume submodule for optimized formatting
-      [rayhagimoto/resume](https://github.com/rayhagimoto/resume) and
-      emphasizes build reproducibility, resume standardization, and developer-centric usability.
-      Project showcases skills in containerized tool design, document automation, reproducible environments,
-      and template-driven document generation for professional use cases.
+    # description: >
+    #   Built a containerized resume generation tool that compiles YAML-formatted resume content into
+    #   a clean, ATS-compatible PDF using a LaTeX template and `latexmk`.
+    #   Designed for cross-platform reproducibility and consistent rendering via a Dockerized build pipeline.
+    #   Users define content modularly in YAML, enabling structured sections that can be swapped or extended;
+    #   while not fully toggle-based, the layout supports flexible customization through LaTeX template editing.
+    #   The system integrates a custom resume submodule for optimized formatting
+    #   [rayhagimoto/resume](https://github.com/rayhagimoto/resume) and
+    #   emphasizes build reproducibility, resume standardization, and developer-centric usability.
+    #   Project showcases skills in containerized tool design, document automation, reproducible environments,
+    #   and template-driven document generation for professional use cases.
     bullets:
       - 'Built a containerized YAML-to-PDF resume generator using LaTeX and Docker for cross-platform consistency.'
       - 'Enabled modular, developer-friendly resume authoring with customizable templates and reproducible builds.'
@@ -191,13 +191,13 @@ technical_writing:
     organization: 'Personal Project'
     location: 'Remote'
     dates: '2024'
-    description: >
-      Authored a mathematically rigorous set of notes covering the foundations of linear regression,
-      including derivations of the OLS estimator, statistical assumptions, inference under Gauss-Markov conditions,
-      and connections to probabilistic modeling and matrix algebra.
-      Typeset using the Typst markup framework, with custom styling and layout configurations to optimize
-      readability and visual structure.
-      Available at: [rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf](https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf)
+    # description: >
+    #   Authored a mathematically rigorous set of notes covering the foundations of linear regression,
+    #   including derivations of the OLS estimator, statistical assumptions, inference under Gauss-Markov conditions,
+    #   and connections to probabilistic modeling and matrix algebra.
+    #   Typeset using the Typst markup framework, with custom styling and layout configurations to optimize
+    #   readability and visual structure.
+    #   Available at: [rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf](https://rayhagimoto.github.io/linear-regression-notes/linear_regression.pdf)
 
   - title: 'Stochastic Calculus and Options Pricing Notes'
     organization: 'Personal Project'

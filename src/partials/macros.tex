@@ -5,21 +5,23 @@
   \end{TightFrame}
 \BLOCK{endmacro}
 
-\BLOCK{macro BaseEntry(title, dates, subtitle, location, body)}
-  \begin{TightFrame}
-    \makebox[0pt][l]{%
-      \parbox{\linewidth}{%
-        \BoldBeforeComma{\VAR{title}}%
-        \hfill
-        \VAR{dates}\\%
-        \textit{\VAR{subtitle}\BLOCK{if location}, \VAR{location}\BLOCK{endif}}%
-        \begin{TightFrame}
-          \VAR{body}
-        \end{TightFrame}
+\BLOCK{macro BaseEntry(title, dates, subtitle, location, body)}%
+  \begin{TightFrame}%
+    {%
+      \raggedright%
+    \BoldBeforeComma{\VAR{title}}%
+    \hfill
+    \VAR{dates}\\%
+    \textit{\VAR{subtitle}\BLOCK{if location}, \VAR{location}\BLOCK{endif}}%
+    \begin{TightFrame}%
+      {%
+        \raggedright%
+        \VAR{body}%
       }%
+    \end{TightFrame}%
     }%
-  \end{TightFrame}
-\BLOCK{endmacro}
+  \end{TightFrame}%
+\BLOCK{endmacro}%
 
 \BLOCK{macro AddBullets(items)}
   \begin{itemize}[leftmargin=1em]
@@ -34,9 +36,3 @@
   \vspace{0.5em}
 \BLOCK{endmacro}
 
-\BLOCK{macro SkillsEntry(skills)}
-  \noindent{\textbf{Skills:}}
-  \BLOCK{for skill in skills}
-    \VAR{skill}\BLOCK{if not loop.last}, \BLOCK{endif}
-  \BLOCK{endfor}
-\BLOCK{endmacro}
