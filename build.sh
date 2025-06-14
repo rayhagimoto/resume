@@ -6,7 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Default values
 IMAGE_NAME=resume-builder
-CONTAINER_NAME=resume-container
+CONTAINER_NAME=rayhagimoto-resume-container
 DEFAULT_OUTPUT_DIR="$SCRIPT_DIR/output"
 CONTENT_FILE="$SCRIPT_DIR/content.yaml"
 OUTPUT_DIR=""
