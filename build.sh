@@ -10,6 +10,7 @@ CONTENT_FILE="$SCRIPT_DIR/content.yaml"
 OUTPUT_DIR=""
 FILENAME=""
 FORCE=false
+CI_MODE=false
 
 print_help() {
     echo "Usage: $0 [options]"
@@ -19,12 +20,12 @@ print_help() {
     echo "  --output-dir DIR      Directory to save the output PDF (default: ./output)"
     echo "  --filename NAME       Output PDF filename (default determined from content)"
     echo "  -y, --yes             Overwrite output without prompting"
+    echo "  --ci                  Run in CI mode (non-interactive overwrite)"
     echo "  --help                Show this help message and exit"
     echo ""
     echo "Example:"
     echo "  $0 --content cv.yaml --output-dir ./tmp --filename resume.pdf"
 }
-
 
 # Parse CLI args
 while [[ $# -gt 0 ]]; do
@@ -45,6 +46,10 @@ while [[ $# -gt 0 ]]; do
             FORCE=true
             shift
             ;;
+        --ci)
+            CI_MODE=true
+            shift
+            ;;
         --help)
             print_help
             exit 0
@@ -56,8 +61,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-
 
 # Set default output dir
 if [ -z "$OUTPUT_DIR" ]; then
@@ -72,11 +75,10 @@ docker build -t "$IMAGE_NAME" "$SCRIPT_DIR"
 ABSOLUTE_CONTENT_PATH="$(realpath "$CONTENT_FILE")"
 ABSOLUTE_OUTPUT_PATH="$(realpath "$OUTPUT_DIR")"
 
-# If filename is specified, sanitize it: trim whitespace, remove ".pdf" (if present), and re-append ".pdf"
+# Determine output filename
 if [ -n "$FILENAME" ]; then
     FILENAME="$(echo "$FILENAME" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/\.pdf$//').pdf"
 else
-    # Get default filename from container
     FILENAME=$(docker run --rm \
         -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
         "$IMAGE_NAME" \
@@ -88,23 +90,22 @@ print(get_default_filename(content))
 ")
 fi
 
-# Remove old container if exists
+# Remove old container if it exists
 docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
-# Start a container that builds resume inside and leaves output in /tmp/final.pdf
+# Build inside container, saving PDF to /tmp
 docker run --name "$CONTAINER_NAME" \
     -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml \
     "$IMAGE_NAME" \
     bash -c "
-        python3 compile_resume.py --content content.yaml --filename $FILENAME --output-dir=/tmp
+        python3 compile_resume.py --content content.yaml --filename \"$FILENAME\" --output-dir=/tmp
     "
 
-# Determine final path
 FINAL_OUTPUT_PATH="$ABSOLUTE_OUTPUT_PATH/$FILENAME"
 
-# Check overwrite
+# Handle overwrite logic
 if [ -f "$FINAL_OUTPUT_PATH" ]; then
-    if [ "$FORCE" = true ]; then
+    if [ "$FORCE" = true ] || [ "$CI_MODE" = true ]; then
         echo "Overwriting existing file: $FINAL_OUTPUT_PATH"
     else
         echo "Warning: $FINAL_OUTPUT_PATH already exists."
@@ -113,10 +114,9 @@ if [ -f "$FINAL_OUTPUT_PATH" ]; then
     fi
 fi
 
-# Copy the built PDF from container
+# Copy built PDF out of container
 docker cp "$CONTAINER_NAME:/tmp/$FILENAME" "$FINAL_OUTPUT_PATH"
 docker rm -f "$CONTAINER_NAME" >/dev/null
 
-# Done
 echo "✅ Resume built successfully: $FINAL_OUTPUT_PATH"
 ls -lh "$FINAL_OUTPUT_PATH"
