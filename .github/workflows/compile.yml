@@ -21,19 +21,10 @@ jobs:
       - name: Build Docker image
         run: docker build -t resume-builder .
 
-      - name: Run build.sh inside Docker
+      - name: Run build.sh (no Docker mount)
         run: |
-          docker run --name resume-container \
-            -v "${{ github.workspace }}:/app" \
-            -w /app \
-            resume-builder \
-            bash -c "chmod +x build.sh && ./build.sh --output-dir /tmp/output --yes --ci"
-
-      - name: Copy resume from container
-        run: |
-          mkdir -p output
-          docker cp resume-container:/tmp/output/. output/
-          docker rm -f resume-container
+          chmod +x build.sh
+          ./build.sh --output-dir output --yes --ci
 
       - name: List outputs
         run: ls -l output
