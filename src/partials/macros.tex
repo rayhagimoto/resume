@@ -8,14 +8,12 @@
 \BLOCK{macro BaseEntry(title, dates, subtitle, location, body)}%
   \begin{TightFrame}%
     {%
-      \raggedright%
     \BoldBeforeComma{\VAR{title}}%
     \hfill
     \VAR{dates}\\%
     \textit{\VAR{subtitle}\BLOCK{if location}, \VAR{location}\BLOCK{endif}}%
     \begin{TightFrame}%
       {%
-        \raggedright%
         \VAR{body}%
       }%
     \end{TightFrame}%

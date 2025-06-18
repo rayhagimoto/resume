@@ -19,7 +19,6 @@
 \pdfgentounicode=1
 \pdfinclusioncopyfonts=1
 \renewcommand{\labelitemi}{\textasteriskcentered} % bullet points use asterisk
-\AtBeginDocument{\RaggedRight}
 
 
 % Layout and formatting
@@ -31,13 +30,13 @@
 \RequirePackage{titlesec}
 \RequirePackage{titling}
 \RequirePackage{mdframed}
-\RequirePackage{ragged2e}
+\AtBeginDocument{\sloppy}
 
 %----------------------------------------------------------
 % Section formatting
 %----------------------------------------------------------
 \titleformat{\section}
-  {\bfseries}{}{0pt}{}[{\vspace{0.1em} \titlerule[0.1pt]}]
+  {\bfseries}{}{0em}{}[{\vspace{0.1em} \titlerule[0.1pt]}]
 \titlespacing*{\section}{0pt}{0.6em}{0.6em}
 
 %----------------------------------------------------------
@@ -54,14 +53,14 @@
 % No paragraph indent or skip
 %----------------------------------------------------------
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt}
+\setlength{\parskip}{0.1em}
 
 %----------------------------------------------------------
 % Tighter itemize formatting
 %----------------------------------------------------------
 \setlist[itemize]{%
 topsep=0pt,
-itemsep=0pt,
+itemsep=0.1em,
 parsep=0pt,
 partopsep=0pt,
 leftmargin=1em
@@ -76,10 +75,9 @@ leftmargin=1em
   innerrightmargin=0pt,
   innertopmargin=0pt,
   innerbottommargin=0pt,
-  skipabove=0.5em,
-  skipbelow=0em,
+  skipabove=0.4em,
+  skipbelow=0.4em,
   nobreak=true,
-  font=\RaggedRight
 ]{TightFrame}
 
 %----------------------------------------------------------
@@ -102,19 +100,34 @@ leftmargin=1em
 % === HEADER MACRO ===
 %----------------------------------------------------------
 \newcommand{\MakeHeader}{%
-  \begin{center}
-    {\large\bfseries \MakeUppercase{\Name}}\\
-    \vspace{0.2em}
-    {\itshape \Title}\\
-    \vspace{0.2em}
-    \Phone \,$|$\, 
-    \href{mailto:\Email}{\Email} \,$|$\, 
-    \href{\LinkedInURL}{\ShortURL{\LinkedInURL}} \,$|$\, 
-    \href{\WebsiteURL}{\ShortURL{\WebsiteURL}}\\
-    \vspace{0.2em}
+  \noindent
+  \parbox{\textwidth}{%
+    \centering
+    {\large\bfseries \MakeUppercase{\Name}}\\[0.2em]
+    { \itshape \Title}\\[0.2em]
+    \Phone \,$|$\,
+    \href{mailto:\Email}{\Email} \,$|$\,
+    \href{\LinkedInURL}{\ShortURL{\LinkedInURL}} \,$|$\,
+    \href{\WebsiteURL}{\ShortURL{\WebsiteURL}}\\[0.2em]
     Address: \Location
-  \end{center}
+  }%
+  % \vspace*{0em}
 }
+
+% \newcommand{\MakeHeader}{%
+%   \begin{center}
+%     {\large\bfseries \MakeUppercase{\Name}}\\
+%     \vspace{0.2em}
+%     {\large \itshape \Title}\\
+%     \vspace{0.2em}
+%     \Phone \,$|$\, 
+%     \href{mailto:\Email}{\Email} \,$|$\, 
+%     \href{\LinkedInURL}{\ShortURL{\LinkedInURL}} \,$|$\, 
+%     \href{\WebsiteURL}{\ShortURL{\WebsiteURL}}\\
+%     \vspace{0.2em}
+%     Address: \Location
+%   \end{center}
+% }
 
 %----------------------------------------------------------
 % === PROFILE SLOT ===

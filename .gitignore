@@ -40,6 +40,7 @@
 #----------------------------------
 # VSCode / Cursor
 .vscode/
+.cursor/
 cursor.json
 
 # Swap/backup files
@@ -50,6 +51,9 @@ cursor.json
 # OS-specific
 .DS_Store
 Thumbs.db
+
+# My personal resumes
+/contents/
 
 # Cursor
 .cursorrules

@@ -1,14 +1,20 @@
 \BLOCK{import 'partials/macros.tex' as macros}
 
 \BLOCK{call macros.BaseSection('EDUCATION')}
-  \BLOCK{for item in education}
-    \VAR{macros.BaseEntry(
-      item.organization,
-      item.dates,
-      item.title,
-      item.location,
-      (macros.AddBullets(item.bullets) if item.bullets else "")
-      + (macros.AddDescription(item.description) if item.description else "")
-    )}
-  \BLOCK{endfor}
+\BLOCK{for item in education}
+\begin{TightFrame}%
+  {%
+  \BoldBeforeComma{\VAR{item.institution}}\emph{\BLOCK{if item.location}, \VAR{item.location}\BLOCK{endif}}%
+  \hfill
+  \VAR{item.dates}\\%
+  \textit{\VAR{item.degree}\BLOCK{if item.gpa}, (GPA: \VAR{item.gpa})\BLOCK{endif}}%
+  \begin{TightFrame}%
+    {%
+    \VAR{(macros.AddBullets(item.bullets) if item.bullets else "")
+    + (macros.AddDescription(item.description) if item.description else "")}%
+    }%
+  \end{TightFrame}%
+  }%
+\end{TightFrame}%
+\BLOCK{endfor}
 \BLOCK{endcall}
