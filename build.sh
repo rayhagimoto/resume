@@ -80,7 +80,7 @@ ABSOLUTE_CONTENT_PATH="$(realpath "$CONTENT_FILE")"
 
 # CI-specific build flags
 if [ "$CI_MODE" = true ]; then
-    DOCKER_BUILD_FLAGS="--quiet --progress=plain"
+    DOCKER_BUILD_FLAGS="--quiet"
 else
     DOCKER_BUILD_FLAGS=""
 fi
