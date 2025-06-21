@@ -23,8 +23,8 @@ jobs:
 
       - name: Run build.sh (no Docker mount)
         run: |
-          chmod +x build.sh
-          ./build.sh --output-dir output --yes --ci
+          chmod +x scripts/build.sh
+          ./scripts/build_docker.sh --output-dir output --yes --ci
 
       - name: List outputs
         run: ls -l output
