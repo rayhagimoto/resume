@@ -1,56 +1,57 @@
 # Resume Builder
 
-A LaTeX-based resume builder that generates professional PDF resumes from a YAML configuration file using Jinja2 templating. Designed for modularity, customization, and clean ATS-friendly output.
-
-[Example Output](https://rayhagimoto.github.io/resume/Ray_Hagimoto_Resume.pdf)
+A LaTeX-based resume builder that generates professional, ATS-friendly PDF resumes from a YAML configuration file using Jinja2 templating.
 
 ## Features
 
-* YAML-based resume content management
-* Jinja2-powered LaTeX templating system
-* Docker and Python CLI support for builds
-* Modular templates and reusable section macros
-* ATS (Applicant Tracking System) optimized
-* Company-specific resume variants
+*   YAML-based resume content management
+*   Jinja2-powered LaTeX templating system with custom delimiters to avoid syntax conflicts
+*   Docker and Python CLI support for builds
+*   Modular templates and reusable section macros
+*   ATS (Applicant Tracking System) optimized
 
 ## Prerequisites
 
-* **Python 3.12+** (for local development)
-* **Docker** (for reproducible builds)
+*   **Python 3.12+** and `pip` (for local development)
+*   **LaTeX Distribution** (e.g., TeX Live, MiKTeX) with `latexmk`
+*   **Pandoc**
+*   **Docker** (for reproducible, dependency-free builds)
 
 ---
 
 ## 📄 Configuration Overview
 
-Resume content is defined in a structured `YAML` file (`content.yaml`). Each section is passed through a Jinja2 template engine, and individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
-
----
+Resume content is defined in a structured `YAML` file (e.g., `contents/resume.yaml`). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
 
 ### ✅ Format and Rendering Flow
 
-1. **Write content** in `YAML` format, using Markdown-style strings for formatting.
-2. **Each section** (e.g., `education`, `experience`) corresponds to a Jinja2 template in [src/sections](src/sections).
-3. **Markdown strings** are automatically converted to LaTeX using `pandoc`.
-4. **LaTeX templates** (e.g., `macros.tex`) render this content into a PDF using `latexmk`.
+1.  **Define content** in a `YAML` file. The file's structure is a set of sections (e.g., `profile`, `experience`).
+2.  **Control section order** using the `sections` list at the top of your YAML file. The renderer will iterate through this list and include the corresponding `.tex` templates from `src/sections/`.
+3.  **Write content** using Markdown-style strings for formatting.
+4.  **The build script** automatically converts Markdown strings to LaTeX.
+5.  **Jinja2 templates** render the content into a final `.tex` file, which is then compiled into a PDF using `latexmk`.
 
 You may write your resume in clean, readable YAML with light formatting, while still gaining full LaTeX output fidelity.
 
 ---
 
-### 🔤 Supported Markdown Formatting
+### 🔤 Custom Template Syntax
 
-Pandoc supports most inline Markdown. You may also include raw LaTeX.
+To avoid conflicts with LaTeX's special characters, this project uses custom Jinja2 delimiters:
 
-| Input (YAML)                        | Renders as (LaTeX)                     |
-| ----------------------------------- | -------------------------------------- |
-| `"**Bold** and *italic*"`           | `\textbf{Bold} and \textit{italic}`    |
-| `"This is \\LaTeX{} code"`          | `This is \LaTeX{}`                     |
-| `"Use [link](https://example.com)"` | `Use \href{https://example.com}{link}` |
-| `"Ends with sentence.  "`           | Adds proper spacing in LaTeX           |
+| Jinja2 Syntax | Custom Delimiter | Purpose                 |
+| :------------ | :--------------- | :---------------------- |
+| `{% ... %}`   | `\BLOCK{...}`    | Statements (loops, ifs) |
+| `{{ ... }}`   | `\VAR{...}`      | Expressions, variables  |
+| `{# ... #}`   | `\#{...}`        | Comments                |
+
+This ensures that you can freely use standard LaTeX syntax within your templates without it being misinterpreted by the Jinja2 engine.
 
 ---
 
 ### 👤 Basic Info (Header)
+
+The `profile` section in your YAML populates the resume header.
 
 ```yaml
 profile:
@@ -71,14 +72,14 @@ This section is rendered using `\renewcommand` and the `\MakeHeader` macro in La
 
 ```yaml
 education:
-  - organization: Prestige University
-    title: Doctor of Philosophy in [Your Subject]
+  - institution: Prestige University
+    degree: Doctor of Philosophy in [Your Subject]
     location: City, ST
     dates: Aug 2020 – Dec 2024
     bullets:
       - I studied **bold-faced useful skill**.
-  - organization: UTSA
-    title: Bachelor of Science in [Your Subject]
+  - institution: UTSA
+    degree: Bachelor of Science in [Your Subject]
     location: City, ST
     dates: Aug 2016 – May 2020
     bullets:
@@ -93,8 +94,8 @@ Each entry (marked by `-`) is passed to a Jinja2 macro called `BaseEntry`, then 
 
 ```yaml
 experience:
-  - organization: Company Name
-    title: Quantitative Research Intern
+  - title: Quantitative Research Intern
+    organization: Company Name
     location: City, ST
     dates: Summer 2023
     bullets:
@@ -105,29 +106,27 @@ experience:
 
 ---
 
-### 🧠 Tips for Authors
-
-* You may mix raw LaTeX (e.g., `\LaTeX{}`) and Markdown (e.g., `**bold**`) in the same string.
-* Sentence endings followed by double spaces (`.  `) will properly trigger LaTeX spacing.
-* Trailing and leading whitespace is trimmed automatically during rendering.
-* If both `bullets` and `description` are provided in a section item, `bullets` will appear first.
----
-
 ## 🧱 Project Structure
 
 ```
 .
-├── content.yaml            # YAML resume data
+├── contents/
+│   ├── resume.yaml           # Default resume data
+│   └── jobs/                 # Directory for company-specific YAML files
+│   └── mypapers.bib          # Bibliography file
 ├── compile_resume.py       # Main script to render and compile
-├── build.sh                # Docker wrapper for build
-├── Dockerfile              # Image with LaTeX build tools
-├── requirements.txt        # Python deps (jinja2, pyyaml)
-├── output/                 # Compiled PDFs
+├── scripts/
+│   ├── build_docker.sh       # Docker-based build script
+│   └── build_local.sh        # Local build script (for VSCode tasks)
+├── Dockerfile              # Image with all build tools
+├── requirements.txt        # Python dependencies (jinja2, pyyaml, pypandoc)
+├── output/                 # Compiled PDFs appear here
 └── src/
-    ├── template.tex        # Top-level LaTeX template
-    ├── styles.cls          # Custom LaTeX class & macros
-    ├── macros.tex          # Jinja2 macro definitions
-    ├── sections/           # Jinja2 templates for each section
+    ├── main.tex              # Top-level LaTeX template
+    ├── styles.cls            # Custom LaTeX class & formatting
+    ├── partials/
+    │   └── macros.tex        # Reusable LaTeX and Jinja2 macros
+    └── sections/             # Jinja2 templates for each resume section
 ```
 
 Each section template uses LaTeX macros like `\BaseSection`, `\BaseEntry`, and `\TightFrame` for consistent layout.
@@ -138,92 +137,88 @@ Each section template uses LaTeX macros like `\BaseSection`, `\BaseEntry`, and `
 
 ### 🐳 Docker (Recommended)
 
+The Docker build is the simplest way to compile your resume, as it requires no local installation of LaTeX or other dependencies.
+
+From the project root, run:
 ```bash
-./build.sh
-./build.sh --filename my_resume.pdf --output-dir ./pdfs content.yaml
+./scripts/build_docker.sh
+```
+This command will build the Docker image if it doesn't exist, then run the compilation using `contents/resume.yaml`, and place the output in the `output/` directory.
+
+#### Custom Docker Builds
+
+You can specify a different content file, output directory, or filename.
+
+```bash
+# Build a specific YAML file
+./scripts/build_docker.sh --content contents/jobs/MyCustomResume.yaml
+
+# Specify output directory and filename
+./scripts/build_docker.sh --output-dir ./pdfs --filename my_resume.pdf
 ```
 
 Build script options:
-
-* `--output-dir`: Output directory (default: `./output`)
-* `--filename`: Output file name (default: auto-inferred)
-* `-y`: Skip overwrite prompt
+* `--content`: Path to the input YAML file.
+* `--output-dir`: Output directory (default: `./output`).
+* `--filename`: Output file name (default: auto-generated from profile name).
+* `-y, --yes`: Skip the prompt to overwrite an existing file.
 
 ### 🐍 Local Development (No Docker)
 
+For local development, you must have **Python**, **Pandoc**, and a **LaTeX** distribution installed.
+
+First, set up the Python environment:
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python compile_resume.py
 ```
 
-Output PDF saved to `output/`.
+While you can run `compile_resume.py` directly, the recommended way to build locally is via the provided VSCode task, which uses `scripts/build_local.sh`.
+
+1.  Open the project in VSCode.
+2.  Open the YAML file you wish to compile (e.g., `contents/resume.yaml`).
+3.  Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
+4.  Run the task `Tasks: Run Task` and select `Compile YAML`.
+
+The compiled PDF will appear in the `output/` directory. If you compile a file from `contents/jobs/`, the PDF will be placed in `output/jobs/`.
 
 ---
-
 ## ✍️ Customization
 
 ### Adding a New Section
 
-1. Add YAML block to `content.yaml`
-2. Create a new Jinja2 template in `src/sections/`
-3. Extend `compile_resume.py` if needed
+1.  Add a new data block to your `contents/resume.yaml` file (e.g., `volunteering: ...`).
+2.  Create a corresponding template file `src/sections/volunteering.tex`.
+3.  Add `"volunteering"` to the `sections` list at the top of your `resume.yaml` to include it in the output.
+
+### Creating Resume Variants
+
+To create a resume tailored for a specific company:
+
+1.  Create a new YAML file, e.g., `contents/jobs/CompanyA.yaml`.
+2.  Customize the content as needed.
+3.  Build it using the `--content` flag:
+    ```bash
+    ./scripts/build_docker.sh --content contents/jobs/CompanyA.yaml
+    ```
+    The output will be named `[Your_Name]_Resume_CompanyA.pdf`.
 
 ### Editing Styles
 
-* Modify `src/styles.cls` (LaTeX class)
-* Header rendered via `\renewcommand{\Name}{...}` and `\MakeHeader`
-
-### Example LaTeX Block
-
-Each section is enclosed in a `\begin{TightFrame}` block to avoid section-title separation.
+*   Modify `src/styles.cls` to change fonts, colors, and spacing.
+*   Edit `src/partials/macros.tex` to adjust how section items are rendered.
 
 ---
 
 ## ✅ ATS Compliance
 
-* Plaintext-friendly PDF
-* Standard UTF-8 encoding
-* Clean structure, no hidden formatting
-* Bullet points copy cleanly as `*`
-* Hyphens rendered as `-` instead of en/em-dashes or `--`
+This template is designed to produce PDFs that are easily parsed by Applicant Tracking Systems.
 
-This is accomplished using the following setup:
+*   **Plaintext-friendly PDF**: The output can be cleanly copied and pasted into a plain text editor.
+*   **Standard Encoding**: Uses UTF-8 and standard fonts.
+*   **No Ligatures**: Disables ligatures (e.g., `ff`, `fi`) that can confuse parsers.
+*   **Simple Dashes**: Automatically converts all dash types (en-dash, em-dash, `--`) into a simple hyphen (`-`) for consistency.
+*   **Clean Bullets**: Bullet points are rendered as a simple `*` that copies correctly.
 
-```latex
-% Unicode-safe font and encoding
-\RequirePackage[utf8]{inputenc}
-\RequirePackage[T1]{fontenc}
-\RequirePackage{lmodern}
-\RequirePackage{microtype}
-\DisableLigatures{encoding = *, family = *}
-\pdfgentounicode=1
-```
-
-Additionally, a postprocessing step ensures:
-
-* All en-dashes (`–`), em-dashes (`—`), and LaTeX `--` sequences are replaced with a simple hyphen (`-`) for clean copy-pasting
-* Bullet points are explicitly rendered as `*` using `\textasteriskcentered{}` in LaTeX
-
-You can verify the result by copying the entire PDF content into a plain text editor. The layout should be preserved, all symbols recognizable, and no ligature or dash substitutions that would confuse an ATS parser.
-
----
-
-## 📦 Using as a Git Submodule
-
-```bash
-git submodule add https://github.com/rayhagimoto/resume.git
-```
-
-Then render with:
-
-```bash
-./resume/build.sh my_content.yaml
-```
-
----
-
-## Contributing
-
-Pull requests and suggestions welcome.
+You can verify the result by opening the PDF, selecting all text (`Ctrl+A`), and pasting it into a text file. The layout should be preserved and all symbols should be standard ASCII characters.
