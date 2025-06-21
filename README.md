@@ -21,7 +21,7 @@ A LaTeX-based resume builder that generates professional, ATS-friendly PDF resum
 
 ## 📄 Configuration Overview
 
-Resume content is defined in a structured `YAML` file (e.g., `contents/resume.yaml`). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
+Resume content is defined in a structured `YAML` file (e.g., [`contents/resume.yaml`](contents/resume.yaml). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
 
 ### ✅ Format and Rendering Flow
 
