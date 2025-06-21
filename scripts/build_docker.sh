@@ -6,7 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 IMAGE_NAME=rayhagimoto-resume-builder
 DEFAULT_OUTPUT_DIR="$SCRIPT_DIR/output"
-CONTENT_FILE="$SCRIPT_DIR/content.yaml"
+CONTENT_FILE="$SCRIPT_DIR/scripts/resume.yaml"
 OUTPUT_DIR=""
 FILENAME=""
 FORCE=false
@@ -16,7 +16,7 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --content PATH        Path to content.yaml (default: ./content.yaml)"
+    echo "  --content PATH        Path to content.yaml (default: scripts/resume.yaml)"
     echo "  --output-dir DIR      Directory to save the output PDF (default: ./output)"
     echo "  --filename NAME       Output PDF filename (default determined from content)"
     echo "  -y, --yes             Overwrite output without prompting"
