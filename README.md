@@ -15,7 +15,7 @@ A LaTeX-based resume builder that generates professional, ATS-friendly PDF resum
 *   **Python 3.12+** and `pip` (for local development)
 *   **LaTeX Distribution** (e.g., TeX Live, MiKTeX) with `latexmk`
 *   **Pandoc**
-*   **Docker** (for reproducible, dependency-free builds)
+*   **(Optional) Docker** (for reproducible, dependency-free builds, slower than local builds)
 
 ---
 
