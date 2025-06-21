@@ -145,9 +145,9 @@ def compile_pdf(resume_name, output_dir, content):
 def main():
     start = time.time()
     parser = argparse.ArgumentParser(description="Compile resume from YAML content")
-    parser.add_argument('--content', default='content.yaml', help='Path to content.yaml (default: content.yaml)')
+    parser.add_argument('--content', default=None, help='Path to content.yaml (default: content.yaml)')
     parser.add_argument('--filename', default=None, help='Custom output PDF filename')
-    parser.add_argument('--output-dir', default='output', help='Output directory')
+    parser.add_argument('--output-dir', default=None, help='Output directory')
     args = parser.parse_args()
 
     filename = args.filename

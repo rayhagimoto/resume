@@ -3,11 +3,12 @@
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(realpath "$SCRIPT_DIR/..")"
 
 IMAGE_NAME=rayhagimoto-resume-builder
-DEFAULT_OUTPUT_DIR="$SCRIPT_DIR/output"
-CONTENT_FILE="$SCRIPT_DIR/scripts/resume.yaml"
-OUTPUT_DIR=""
+DEFAULT_OUTPUT_DIR="$PROJECT_ROOT/output"
+CONTENT_FILE="$PROJECT_ROOT/contents/resume.yaml"
+OUTPUT_DIR="$PROJECT_ROOT/output"
 FILENAME=""
 FORCE=false
 CI_MODE=false
@@ -69,31 +70,25 @@ fi
 mkdir -p "$OUTPUT_DIR"
 
 # Resolve absolute paths
-SCRIPT_DIR="$(realpath "$SCRIPT_DIR")"
 ABSOLUTE_OUTPUT_PATH="$(realpath "$OUTPUT_DIR")"
-CONTENT_FILE="$(realpath "$CONTENT_FILE")"
-
-# Copy content file to safe local filename
-cp "$CONTENT_FILE" "$SCRIPT_DIR/tmp_content.yaml"
-CONTENT_FILE="$SCRIPT_DIR/tmp_content.yaml"
 ABSOLUTE_CONTENT_PATH="$(realpath "$CONTENT_FILE")"
 
 # CI-specific build flags
 if [ "$CI_MODE" = true ]; then
-    DOCKER_BUILD_FLAGS="--quiet"
+    DOCKER_BUILD_FLAGS=""
 else
     DOCKER_BUILD_FLAGS=""
 fi
 
 # Build Docker image once
-docker build -t "$IMAGE_NAME" $DOCKER_BUILD_FLAGS "$SCRIPT_DIR"
+docker build -t "$IMAGE_NAME" $DOCKER_BUILD_FLAGS "$PROJECT_ROOT"
 
 # Determine output filename if not provided
 if [ -z "$FILENAME" ]; then
-    FILENAME=$(docker run --rm -v "$SCRIPT_DIR":/app "$IMAGE_NAME" \
+    FILENAME=$(docker run --rm -v "$ABSOLUTE_CONTENT_PATH":/app/content.yaml "$IMAGE_NAME" \
         bash -c "
             cd /app && \
-            python3 -c \"from compile_resume import get_default_filename; import yaml; content = yaml.safe_load(open('tmp_content.yaml')); print(get_default_filename(content))\"
+            python3 -c \"from compile_resume import get_default_filename; import yaml; content = yaml.safe_load(open('content.yaml')); print(get_default_filename(content))\"
         ")
     FILENAME="$(echo "$FILENAME" | sed -e 's/\.pdf$//').pdf"
 else
@@ -115,10 +110,10 @@ fi
 
 # Mount project dir to preserve LaTeX cache (build/) between runs
 docker run --rm \
-    -v "$SCRIPT_DIR":/app \
+    -v "$PROJECT_ROOT":/app \
     -v "$ABSOLUTE_OUTPUT_PATH":/output \
     "$IMAGE_NAME" \
-    bash -c "cd /app && python3 compile_resume.py --content tmp_content.yaml --filename \"$FILENAME\" --output-dir=/output"
+    bash -c "cd /app && python3 compile_resume.py --content \"contents/resume.yaml\" --filename \"$FILENAME\" --output-dir=/output"
 
 echo "✅ Resume built successfully: $FINAL_OUTPUT_PATH"
 ls -lh "$FINAL_OUTPUT_PATH"

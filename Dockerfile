@@ -20,8 +20,11 @@ COPY requirements.txt .
 # Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the project
-COPY . .
+# Copy only necessary files for the build
+COPY compile_resume.py .
+COPY src/ ./src/
+COPY bibstyles/ ./bibstyles/
+COPY contents/ ./contents/
 
 # Default command to build the resume
 CMD ["python", "compile_resume.py"]
