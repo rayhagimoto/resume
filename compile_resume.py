@@ -19,9 +19,7 @@ SKIP_FIELDS = {'phone', 'location', 'name', 'title'}  # Skip these fields in mar
 
 def get_default_filename(content):
     name = content["profile"]["name"].replace(" ", "_")
-    company = content.get("target_company", "")
-    company = company.replace(" ", "") if company and company.lower() != "none" else None
-    return f"{name}_Resume_{company}.pdf" if company else f"{name}_Resume.pdf"
+    return f"{name}_Resume.pdf"
 
 
 def convert_markdown_to_latex(obj, path=None):
@@ -114,7 +112,7 @@ def compile_pdf(resume_name, output_dir, content):
     bib_style = content.get('bibliographystyle', f"hplain.bst").strip().replace(".bst", "")
 
     if bib_file:
-        bib_src = (ROOT / f"{bib_file}.bib").resolve()
+        bib_src = (ROOT / "contents/" f"{bib_file}.bib").resolve()
         bib_dst = (BUILD_DIR / f"{bib_file}.bib").resolve()
         print(f"📦 Copying bib: {bib_src} → {bib_dst}")
         shutil.copy(bib_src, bib_dst)
