@@ -18,10 +18,53 @@ A LaTeX-based resume builder that generates professional, ATS-friendly PDF resum
 *   **(Optional) Docker** (for reproducible, dependency-free builds, slower than local builds)
 
 ---
+## Quickstart
+
+Copy the example resume at contents/resume.yaml and fill in the fields with your own data. Each top-level field defines a section, and the sections which will be included in the rendered resume will be in the `sections:` field. For example,
+
+```
+sections:
+  - 'profile'
+
+profile:
+  name: 'Jane Doe'
+  title: 'Awesome job title'
+  phone: '(123) 456-7890'
+  email: 'janedoe@example.com'
+  location: 'City, ST'
+  linkedin: 'https://linkedin.com/in/janedoe'
+  website: 'https://janedoe.me'
+
+education:
+  - institution: Prestige University
+    degree: Doctor of Philosophy in [Your Subject]
+    location: City, ST
+    dates: Aug 2020 – Dec 2024
+    bullets:
+      - I studied **bold-faced useful skill**.
+  - institution: UTSA
+    degree: Bachelor of Science in [Your Subject]
+    location: City, ST
+    dates: Aug 2016 – May 2020
+    bullets:
+      - _Italicized skill_.
+
+# other sections below
+```
+
+would only render the `profile` section. This makes the design a bit more modular on the fly. You can swap in and out different sections in case one might be relevant for some jobs, and not for others. You could also use it to write up the content for your entire CV and then choose which sections you actually want to include in your resume. 
+
+If you have all the prerequisites installed you could then render the PDF with 
+
+```
+python compile_resume.py --content /path/to/content.yaml --output /path/to/resume.pdf
+```
+
+By default this script will write the .tex file that's rendered using the YAML to the `/build` directory and make the output directory structure if needed.
 
 ## 📄 Configuration Overview
 
-Resume content is defined in a structured `YAML` file (e.g., [`contents/resume.yaml`](contents/resume.yaml). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
+Resume content is defined in a structured `YAML` file (e.g., [`contents/resume.yaml`](contents/resume.yaml)). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
 
 ### ✅ Format and Rendering Flow
 
@@ -110,6 +153,7 @@ experience:
 
 ```
 .
+├── build/                    # Where the main.tex gets rendered from the resume.yaml
 ├── contents/
 │   ├── resume.yaml           # Default resume data
 │   └── jobs/                 # Directory for company-specific YAML files
@@ -118,9 +162,9 @@ experience:
 ├── scripts/
 │   ├── build_docker.sh       # Docker-based build script
 │   └── build_local.sh        # Local build script (for VSCode tasks)
-├── Dockerfile              # Image with all build tools
+├── Dockerfile              # To build image with all build tools
 ├── requirements.txt        # Python dependencies (jinja2, pyyaml, pypandoc)
-├── output/                 # Compiled PDFs appear here
+├── output/                 # Example compiled PDF is here, but you can output wherever you want
 └── src/
     ├── main.tex              # Top-level LaTeX template
     ├── styles.cls            # Custom LaTeX class & formatting
@@ -200,7 +244,7 @@ To create a resume tailored for a specific company:
 2.  Customize the content as needed.
 3.  Build it using the `--content` flag:
     ```bash
-    ./scripts/build_docker.sh --content contents/jobs/CompanyA.yaml
+    ./scripts/build_docker.sh --content contents/jobs/CompanyA.yaml --output [Your_Name]_Resume_CompanyA.pdf.
     ```
     The output will be named `[Your_Name]_Resume_CompanyA.pdf`.
 
