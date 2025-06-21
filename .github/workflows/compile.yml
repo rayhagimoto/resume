@@ -24,7 +24,7 @@ jobs:
       - name: Run build.sh (no Docker mount)
         run: |
           chmod +x scripts/build_docker.sh
-          ./scripts/build_docker.sh --output-dir output --yes --ci
+          ./scripts/build_docker.sh --output "output/Ray_Hagimoto_Resume.pdf" --ci
 
       - name: List outputs
         run: ls -l output

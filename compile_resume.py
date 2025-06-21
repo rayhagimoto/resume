@@ -17,9 +17,9 @@ SRC_DIR = ROOT / "src"
 BIB_DIR = ROOT / "bibstyles"
 SKIP_FIELDS = {'phone', 'location', 'name', 'title'}  # Skip these fields in markdown to latex converter.
 
-def get_default_filename(content):
+def get_default_output_path(content):
     name = content["profile"]["name"].replace(" ", "_")
-    return f"{name}_Resume.pdf"
+    return Path("output") / f"{name}_Resume.pdf"
 
 
 def convert_markdown_to_latex(obj, path=None):
@@ -99,10 +99,13 @@ def render_latex(content_file='content.yaml'):
 
     return content
 
-def compile_pdf(resume_name, output_dir, content):
+def compile_pdf(output_path, content):
     print("🔧 Starting compile_pdf")
     t0 = time.time()
     os.makedirs(BUILD_DIR, exist_ok=True)
+
+    output_path = Path(output_path)
+    output_dir = output_path.parent
 
     src_dir = (ROOT / "src").resolve()
     style_dir = (ROOT / "bibstyles").resolve()
@@ -135,31 +138,34 @@ def compile_pdf(resume_name, output_dir, content):
     )
     print(f"⏱ latexmk finished in {time.time() - t1:.2f}s")
 
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     src_pdf = Path(BUILD_DIR) / "main.pdf"
-    dst_pdf = Path(output_dir) / resume_name
-    shutil.move(src_pdf, dst_pdf)
-    print(f"✅ Built PDF: {dst_pdf}")
+    shutil.move(src_pdf, output_path)
+    print(f"✅ Built PDF: {output_path}")
     print(f"⏱ Total compile_pdf time: {time.time() - t0:.2f}s")
 
 def main():
     start = time.time()
     parser = argparse.ArgumentParser(description="Compile resume from YAML content")
-    parser.add_argument('--content', default=None, help='Path to content.yaml (default: content.yaml)')
-    parser.add_argument('--filename', default=None, help='Custom output PDF filename')
-    parser.add_argument('--output-dir', default=None, help='Output directory')
+    parser.add_argument('--content', default=None, help='Full path to content.yaml')
+    parser.add_argument('-o', '--output', default=None, help='Full path for the output PDF, e.g., /path/to/output.pdf')
     args = parser.parse_args()
 
-    filename = args.filename
-    content = args.content
-    if filename:
-        filename = args.filename.strip().removesuffix(".pdf") + ".pdf"
-    if content and not content.endswith((".yaml", ".yml")):
-        content = content.strip().removesuffix(".yaml") + ".yaml"
+    content_file = args.content.strip()
+    if content_file and not content_file.endswith((".yaml", ".yml")):
+        content_file = content_file + ".yaml"
 
-    content = render_latex(content)
-    resume_name = filename or get_default_filename(content)
-    compile_pdf(resume_name, args.output_dir, content)
+    content = render_latex(content_file)
+
+    output_path_str = args.output
+    if output_path_str:
+        output_path = Path(output_path_str)
+        if output_path.suffix != '.pdf':
+            output_path = output_path.with_suffix('.pdf')
+    else:
+        output_path = get_default_output_path(content)
+
+    compile_pdf(output_path, content)
     print(f"🏁 Total runtime: {time.time() - start:.2f}s")
 
 if __name__ == '__main__':
