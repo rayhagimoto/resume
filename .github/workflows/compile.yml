@@ -11,13 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      id-token: write
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch full history for better git operations
 
       - name: Clean up old output
         run: rm -rf output && mkdir -p output
@@ -25,54 +21,28 @@ jobs:
       - name: Build Docker image
         run: docker build -t resume-builder .
 
-      - name: Run build script
+      - name: Run build.sh (no Docker mount)
         run: |
           chmod +x scripts/build_docker.sh
-          # Fix: Use the correct path to the content file that exists
-          ./scripts/build_docker.sh --content "contents/resume.yaml" --output "output/Ray_Hagimoto_Resume.pdf" --ci
-
+          ./scripts/build_docker.sh --output-dir output --yes --ci
       - name: List outputs
-        run: ls -la output/
+        run: ls -l output
 
       - name: Upload resume PDF(s)
         uses: actions/upload-artifact@v4
         with:
           name: resume-pdfs
           path: output/*.pdf
-          retention-days: 90
 
       - name: Deploy to gh-pages
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main'
         run: |
-          # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Ensure we have the files to deploy
-          if [ ! -f output/*.pdf ]; then
-            echo "Error: No PDF files found in output directory"
-            exit 1
-          fi
-          
-          # Create or switch to gh-pages branch
-          git fetch origin gh-pages || echo "gh-pages branch doesn't exist yet"
-          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            git checkout gh-pages
-            git pull origin gh-pages
-          else
-            git checkout --orphan gh-pages
-          fi
-          
-          # Clear existing content and add new PDFs
-          git rm -rf . 2>/dev/null || true
+          git fetch origin gh-pages || true
+          git switch gh-pages 2>/dev/null || git switch --create gh-pages
+          git rm -rf .
           cp output/*.pdf ./
-          
-          
-          # Add and commit changes
-          git add .
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Deploy resume PDF(s) - $(date)"
-            git push origin gh-pages
-          fi
+          git add *.pdf
+          git commit -m "Deploy resume PDF(s)" || echo "No changes to commit"
+          git push origin gh-pages --force
