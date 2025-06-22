@@ -67,34 +67,6 @@ jobs:
           git rm -rf . 2>/dev/null || true
           cp output/*.pdf ./
           
-          # Create a simple index.html for better user experience
-          cat > index.html << 'EOF'
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Resume - Ray Hagimoto</title>
-    <meta charset="utf-8">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .pdf-link { display: block; margin: 20px 0; padding: 15px; background: #f5f5f5; text-decoration: none; color: #333; border-radius: 5px; }
-        .pdf-link:hover { background: #e5e5e5; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Resume - Ray Hagimoto</h1>
-        <p>Latest resume builds:</p>
-EOF
-          for pdf in *.pdf; do
-            echo "        <a href=\"$pdf\" class=\"pdf-link\">📄 $pdf</a>" >> index.html
-          done
-          echo "        <p><small>Last updated: $(date)</small></p>" >> index.html
-          cat >> index.html << 'EOF'
-    </div>
-</body>
-</html>
-EOF
           
           # Add and commit changes
           git add .
