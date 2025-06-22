@@ -17,7 +17,7 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --content PATH        Path to content.yaml (default: scripts/resume.yaml)"
+    echo "  --content PATH        Path to content.yaml (default: contents/resume.yaml)"
     echo "  -o, --output PATH     Full path for the output PDF (e.g., /path/to/output.pdf)"
     echo "  -y, --yes             Overwrite output without prompting"
     echo "  --ci                  Run in CI mode (non-interactive overwrite)"
@@ -75,6 +75,12 @@ ABSOLUTE_CONTENT_PATH="$(realpath "$CONTENT_FILE")"
 OUTPUT_DIR=$(dirname "$ABSOLUTE_OUTPUT_PATH")
 FILENAME=$(basename "$ABSOLUTE_OUTPUT_PATH")
 
+# Verify content file exists
+if [ ! -f "$ABSOLUTE_CONTENT_PATH" ]; then
+    echo "Error: Content file not found: $ABSOLUTE_CONTENT_PATH"
+    exit 1
+fi
+
 mkdir -p "$OUTPUT_DIR"
 
 # CI-specific build flags
@@ -101,11 +107,13 @@ if [ -f "$ABSOLUTE_OUTPUT_PATH" ]; then
 fi
 
 # Mount project dir and a dedicated output volume
+# Convert absolute path to relative path for use inside the container
+RELATIVE_CONTENT_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$CONTENT_FILE")
 docker run --rm \
     -v "$PROJECT_ROOT":/app \
     -v "$OUTPUT_DIR":/output \
     "$IMAGE_NAME" \
-    bash -c "cd /app && python3 compile_resume.py --content \"$CONTENT_FILE\" --output \"/output/$FILENAME\""
+    bash -c "cd /app && python3 compile_resume.py --content \"$RELATIVE_CONTENT_PATH\" --output \"/output/$FILENAME\""
 
 echo "✅ Resume built successfully: $ABSOLUTE_OUTPUT_PATH"
 ls -lh "$ABSOLUTE_OUTPUT_PATH"
