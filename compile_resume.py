@@ -99,6 +99,17 @@ def render_latex(content_file='content.yaml'):
 
     return content
 
+def cleanup_build_artifacts():
+    """Removes temporary build artifacts like .bib and .bst files from the build directory."""
+    print("🧹 Cleaning up copied build artifacts...")
+    for ext in ["*.bib", "*.bst"]:
+        for f in BUILD_DIR.glob(ext):
+            try:
+                os.remove(f)
+                print(f"  - Removed {f.name}")
+            except OSError as e:
+                print(f"Error removing file {f}: {e}")
+
 def compile_pdf(output_path, content):
     print("🔧 Starting compile_pdf")
     t0 = time.time()
@@ -112,19 +123,19 @@ def compile_pdf(output_path, content):
     bib_file = content.get('bibliography', None)
     if bib_file:
         bib_file = bib_file.replace(".bib", "")
-    bib_style = content.get('bibliographystyle', f"hplain.bst").strip().replace(".bst", "")
+    bib_style = content.get('bibliographystyle', 'hplain').strip().replace(".bst", "")
 
     if bib_file:
-        bib_src = (ROOT / "contents/" f"{bib_file}.bib").resolve()
-        bib_dst = (BUILD_DIR / f"{bib_file}.bib").resolve()
-        print(f"📦 Copying bib: {bib_src} → {bib_dst}")
-        shutil.copy(bib_src, bib_dst)
+        bib_src = ROOT / "contents" / f"{bib_file}.bib"
+        if bib_src.exists():
+            shutil.copy(bib_src, BUILD_DIR)
+            print(f"📦 Copied bib file: {bib_src.name}")
 
     if bib_style:
-        style_src = (style_dir / f"{bib_style}.bst").resolve()
-        style_dst = (BUILD_DIR / f"{bib_style}.bst").resolve()
-        print(f"📦 Copying bibstyle: {style_src} → {style_dst}")
-        shutil.copy(style_src, style_dst)
+        style_src = style_dir / f"{bib_style}.bst"
+        if style_src.exists():
+            shutil.copy(style_src, BUILD_DIR)
+            print(f"📦 Copied bib style: {style_src.name}")
 
     env = os.environ.copy()
     env["TEXINPUTS"] = str(src_dir) + os.pathsep + str(style_dir) + os.pathsep + str(ROOT) + os.pathsep
@@ -142,6 +153,8 @@ def compile_pdf(output_path, content):
     src_pdf = Path(BUILD_DIR) / "main.pdf"
     shutil.move(src_pdf, output_path)
     print(f"✅ Built PDF: {output_path}")
+
+
     print(f"⏱ Total compile_pdf time: {time.time() - t0:.2f}s")
 
 def main():

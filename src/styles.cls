@@ -37,7 +37,11 @@
 %----------------------------------------------------------
 \titleformat{\section}
   {\bfseries}{}{0pt}{}[{\vspace{0.1em} \titlerule[0.1pt]}]
-\titlespacing*{\section}{0pt}{0em}{0.6em}
+\titlespacing*{\section}
+  {0pt}     % left margin 
+  {0em}     % padding before, or 0em or 0.2em
+  {0.6em}   % padding after 
+
 
 %----------------------------------------------------------
 % Strip "<scheme>://" from URL for display
@@ -53,14 +57,14 @@
 % No paragraph indent or skip
 %----------------------------------------------------------
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt}
+\setlength{\parskip}{0pt} % 0pt or 2pt
 
 %----------------------------------------------------------
 % Tighter itemize formatting
 %----------------------------------------------------------
 \setlist[itemize]{%
 topsep=0pt,
-itemsep=0pt,
+itemsep=0pt, % 0pt or 2pt
 parsep=0pt,
 partopsep=0pt,
 leftmargin=1em
@@ -75,7 +79,7 @@ leftmargin=1em
   innerrightmargin=0pt,
   innertopmargin=0pt,
   innerbottommargin=0pt,
-  skipabove=0.3em,
+  skipabove=0.3em, 
   skipbelow=0.3em,
   nobreak=true,
 ]{TightFrame}
