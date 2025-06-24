@@ -11,6 +11,8 @@ import pypandoc
 import time
 import re
 
+USE_PANDOC = False
+
 ROOT = Path(__file__).parent.resolve()
 BUILD_DIR = ROOT / "build"
 SRC_DIR = ROOT / "src"
@@ -23,17 +25,20 @@ def get_default_output_path(content):
 
 
 def convert_markdown_to_latex(obj, path=None):
-    if path is None:
-        path = []
-    if isinstance(obj, dict):
-        return {key: convert_markdown_to_latex(value, path + [key]) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [convert_markdown_to_latex(item, path + ['<list>']) for item in obj]
-    elif isinstance(obj, str):
-        key = path[-1] if path else ''
-        if key in SKIP_FIELDS:
+    if USE_PANDOC:
+        if path is None:
+            path = []
+        if isinstance(obj, dict):
+            return {key: convert_markdown_to_latex(value, path + [key]) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_markdown_to_latex(item, path + ['<list>']) for item in obj]
+        elif isinstance(obj, str):
+            key = path[-1] if path else ''
+            if key in SKIP_FIELDS:
+                return obj
+            return pypandoc.convert_text(obj, to='latex', format='markdown').strip()
+        else:
             return obj
-        return pypandoc.convert_text(obj, to='latex', format='markdown').strip()
     else:
         return obj
 
