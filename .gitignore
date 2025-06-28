@@ -1,9 +1,0 @@
-build/
-*.pdf 
-.cursorrules
-.vscode/*
-contents/CV.yaml
-contents/Resume_DataScience.yaml
-contents/Resume_Quant.yaml
-contents/jobs/*
-output/
