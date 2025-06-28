@@ -24,7 +24,7 @@ print_help() {
     echo "  --help                Show this help message and exit"
     echo ""
     echo "Example:"
-    echo "  $0 --content cv.yaml --output-dir ./tmp --filename resume.pdf"
+    echo "  $0 contents/main.yaml contents main"
 }
 
 # Parse CLI args

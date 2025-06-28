@@ -21,7 +21,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t resume-builder .
 
-      - name: Run build.sh (no Docker mount)
+      - name: Run build_docker.sh (no Docker mount)
         run: |
           chmod +x scripts/build_docker.sh
           ./scripts/build_docker.sh --yes --ci
