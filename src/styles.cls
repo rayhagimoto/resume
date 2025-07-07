@@ -107,7 +107,7 @@ leftmargin=1em
   \noindent
   \parbox{\textwidth}{%
     \centering
-    {\large\bfseries \MakeUppercase{\Name}}\\[0.2em]
+    {\Large\bfseries \Name}\\[0.2em]
     { \itshape \Title}\\[0.2em]
     \Phone \,$|$\,
     \href{mailto:\Email}{\Email} \,$|$\,

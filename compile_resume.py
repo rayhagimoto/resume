@@ -7,11 +7,12 @@ import jinja2
 import argparse
 import shutil
 from pathlib import Path
-import pypandoc
 import time
 import re
 
 USE_PANDOC = False
+if USE_PANDOC:
+    import pypandoc
 
 ROOT = Path(__file__).parent.resolve()
 BUILD_DIR = ROOT / "build"
@@ -96,11 +97,11 @@ def render_latex(content_file='content.yaml'):
     full_tex = main_template.render(sections=sections_tex, profile=content['profile'])
     print(f"⏱ Main template rendered in {time.time() - t4:.2f}s")
 
-    build_main_tex = Path(BUILD_DIR) / "main.tex"
+    build_main_tex = Path(BUILD_DIR) / "_main.tex"
     build_main_tex.parent.mkdir(parents=True, exist_ok=True)
     with open(build_main_tex, "w", encoding="utf-8") as f:
         f.write(normalize_dashes(full_tex))
-    print(f"✅ main.tex written at {build_main_tex}")
+    print(f"✅ _main.tex written at {build_main_tex}")
 
     return content
 
@@ -144,10 +145,11 @@ def compile_pdf(output_path, content):
 
     env = os.environ.copy()
     env["TEXINPUTS"] = str(src_dir) + os.pathsep + str(style_dir) + os.pathsep + str(ROOT) + os.pathsep
+    print(F"Setting TEXINPUTS={env['TEXINPUTS']}")
 
     t1 = time.time()
     subprocess.run(
-        ["latexmk", "-f", "-pdf", "-output-directory=.", "main.tex"],
+        ["latexmk", "-f", "-pdf", "-output-directory=.", "_main.tex"],
         cwd=BUILD_DIR,
         check=True,
         env=env
@@ -155,7 +157,7 @@ def compile_pdf(output_path, content):
     print(f"⏱ latexmk finished in {time.time() - t1:.2f}s")
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    src_pdf = Path(BUILD_DIR) / "main.pdf"
+    src_pdf = Path(BUILD_DIR) / "_main.pdf"
     shutil.move(src_pdf, output_path)
     print(f"✅ Built PDF: {output_path}")
 
