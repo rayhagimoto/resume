@@ -116,8 +116,10 @@ def cleanup_build_artifacts(build_dir):
                 print(f"Error removing file {f}: {e}")
 
 def compile_pdf(output_path, content, build_dir=None):
-    if build_dir == None:
+    if not build_dir:
         build_dir = ROOT / "build"
+    else:
+        build_dir = Path(build_dir).resolve()
 
     print("🔧 Starting compile_pdf")
     t0 = time.time()
@@ -166,6 +168,7 @@ def compile_pdf(output_path, content, build_dir=None):
     from time import perf_counter_ns
     output_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy(build_dir / "_main.pdf", output_path)
+    os.remove(build_dir / "_main.pdf")
     print(f"✅ Built PDF: {output_path}")
 
     print(f"⏱ Total compile_pdf time: {time.time() - t0:.2f}s")
@@ -178,7 +181,7 @@ def main():
     parser.add_argument('-b', '--build', default=None, help='Directory to store build artifacts')
     args = parser.parse_args()
 
-    build_dir = Path(args.build.strip())
+    build_dir = str(Path(args.build.strip()).resolve())
 
     content_file = args.content.strip()
     if content_file and not content_file.endswith((".yaml", ".yml")):
@@ -194,7 +197,7 @@ def main():
     else:
         output_path = get_default_output_path(content)
 
-    compile_pdf(output_path, content)
+    compile_pdf(output_path, content, build_dir)
     print(f"🏁 Total runtime: {time.time() - start:.2f}s")
 
 if __name__ == '__main__':
