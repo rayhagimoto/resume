@@ -15,7 +15,6 @@ if USE_PANDOC:
     import pypandoc
 
 ROOT = Path(__file__).parent.resolve()
-BUILD_DIR = ROOT / "build"
 SRC_DIR = ROOT / "src"
 BIB_DIR = ROOT / "bibstyles"
 SKIP_FIELDS = {'phone', 'location', 'name', 'title'}  # Skip these fields in markdown to latex converter.
@@ -62,7 +61,7 @@ def normalize_dashes(s: str) -> str:
          .replace("--", "-")
     )
 
-def render_latex(content_file='content.yaml'):
+def render_latex(content_file, build_dir):
     t0 = time.time()
     print("🔧 Starting render_latex")
 
@@ -97,7 +96,7 @@ def render_latex(content_file='content.yaml'):
     full_tex = main_template.render(sections=sections_tex, profile=content['profile'])
     print(f"⏱ Main template rendered in {time.time() - t4:.2f}s")
 
-    build_main_tex = Path(BUILD_DIR) / "_main.tex"
+    build_main_tex = Path(build_dir) / "_main.tex"
     build_main_tex.parent.mkdir(parents=True, exist_ok=True)
     with open(build_main_tex, "w", encoding="utf-8") as f:
         f.write(normalize_dashes(full_tex))
@@ -105,62 +104,69 @@ def render_latex(content_file='content.yaml'):
 
     return content
 
-def cleanup_build_artifacts():
+def cleanup_build_artifacts(build_dir):
     """Removes temporary build artifacts like .bib and .bst files from the build directory."""
     print("🧹 Cleaning up copied build artifacts...")
     for ext in ["*.bib", "*.bst"]:
-        for f in BUILD_DIR.glob(ext):
+        for f in build_dir.glob(ext):
             try:
                 os.remove(f)
                 print(f"  - Removed {f.name}")
             except OSError as e:
                 print(f"Error removing file {f}: {e}")
 
-def compile_pdf(output_path, content):
+def compile_pdf(output_path, content, build_dir=None):
+    if build_dir == None:
+        build_dir = ROOT / "build"
+
     print("🔧 Starting compile_pdf")
     t0 = time.time()
-    os.makedirs(BUILD_DIR, exist_ok=True)
+    os.makedirs(build_dir, exist_ok=True)
+
 
     output_path = Path(output_path)
     output_dir = output_path.parent
 
     src_dir = (ROOT / "src").resolve()
-    style_dir = (ROOT / "bibstyles").resolve()
-    bib_file = content.get('bibliography', None)
-    if bib_file:
-        bib_file = bib_file.replace(".bib", "")
-    bib_style = content.get('bibliographystyle', 'hplain').strip().replace(".bst", "")
 
-    if bib_file:
-        bib_src = ROOT / "contents" / f"{bib_file}.bib"
-        if bib_src.exists():
-            shutil.copy(bib_src, BUILD_DIR)
-            print(f"📦 Copied bib file: {bib_src.name}")
-
-    if bib_style:
-        style_src = style_dir / f"{bib_style}.bst"
-        if style_src.exists():
-            shutil.copy(style_src, BUILD_DIR)
-            print(f"📦 Copied bib style: {style_src.name}")
+    if 'bibliography' in content:
+        style_dir = (ROOT / "bibstyles").resolve()
+        bib_file = content.get('bibliography', None)
+        if bib_file:
+            bib_file = bib_file.replace(".bib", "")
+        bib_style = content.get('bibliographystyle', 'hplain').strip().replace(".bst", "")
+        if bib_file:
+            bib_src = f"{bib_file}.bib" # e.g. path/to/mypapers.bib
+            if bib_src.exists():
+                shutil.copy(bib_src, build_dir)
+                print(f"📦 Copied bib file: {bib_src.name} to {build_dir}")
+            else:
+                print(f"Bibliography file not found, skipping.")
+            if bib_style:
+                style_src = style_dir / f"{bib_style}.bst"
+                if style_src.exists():
+                    shutil.copy(style_src, build_dir)
+                    print(f"📦 Copied bib style: {style_src.name} to {build_dir}")
 
     env = os.environ.copy()
-    env["TEXINPUTS"] = str(src_dir) + os.pathsep + str(style_dir) + os.pathsep + str(ROOT) + os.pathsep
+    env["TEXINPUTS"] = str(src_dir) + os.pathsep
+    
     print(F"Setting TEXINPUTS={env['TEXINPUTS']}")
+    print(f"Building using build_path: {str(build_dir)}")
 
     t1 = time.time()
     subprocess.run(
-        ["latexmk", "-f", "-pdf", "-output-directory=.", "_main.tex"],
-        cwd=BUILD_DIR,
+        ["latexmk", "-f", "-pdf", f"-output-directory={str(build_dir)}", "_main.tex"],
+        cwd=build_dir,
         check=True,
         env=env
     )
     print(f"⏱ latexmk finished in {time.time() - t1:.2f}s")
 
+    from time import perf_counter_ns
     output_dir.mkdir(parents=True, exist_ok=True)
-    src_pdf = Path(BUILD_DIR) / "_main.pdf"
-    shutil.move(src_pdf, output_path)
+    shutil.copy(build_dir / "_main.pdf", output_path)
     print(f"✅ Built PDF: {output_path}")
-
 
     print(f"⏱ Total compile_pdf time: {time.time() - t0:.2f}s")
 
@@ -169,13 +175,16 @@ def main():
     parser = argparse.ArgumentParser(description="Compile resume from YAML content")
     parser.add_argument('--content', default=None, help='Full path to content.yaml')
     parser.add_argument('-o', '--output', default=None, help='Full path for the output PDF, e.g., /path/to/output.pdf')
+    parser.add_argument('-b', '--build', default=None, help='Directory to store build artifacts')
     args = parser.parse_args()
+
+    build_dir = Path(args.build.strip())
 
     content_file = args.content.strip()
     if content_file and not content_file.endswith((".yaml", ".yml")):
         content_file = content_file + ".yaml"
 
-    content = render_latex(content_file)
+    content = render_latex(content_file, build_dir)
 
     output_path_str = args.output
     if output_path_str:
