@@ -14,7 +14,6 @@ A LaTeX-based resume builder that generates professional, ATS-friendly PDF resum
 
 *   **Python 3.12+** and `pip` (for local development)
 *   **LaTeX Distribution** (e.g., TeX Live, MiKTeX) with `latexmk`
-*   **Pandoc**
 *   **(Optional) Docker** (for reproducible, dependency-free builds, slower than local builds)
 
 ---
@@ -57,21 +56,21 @@ would only render the `profile` section. This makes the design a bit more modula
 If you have all the prerequisites installed you could then render the PDF with 
 
 ```
-python compile_resume.py --content /path/to/content.yaml --output /path/to/resume.pdf
+python compile_resume.py --content /path/to/content.yaml --output /path/to/resume.pdf --build /path/to/build_dir
 ```
 
 By default this script will write the .tex file that's rendered using the YAML to the `/build` directory and make the output directory structure if needed.
 
 ## 📄 Configuration Overview
 
-Resume content is defined in a structured `YAML` file (e.g., [`contents/resume.yaml`](contents/resume.yaml)). The build script processes this file through a Jinja2 template engine. Individual strings are converted from Markdown to LaTeX using [Pandoc](https://pandoc.org) via `pypandoc`. This enables easy formatting while supporting raw LaTeX for advanced users.
+Resume content is defined in a structured `YAML` file (e.g., [`contents/resume.yaml`](contents/resume.yaml)). The build script processes this file through a Jinja2 template engine. Individual strings are rendered directly into LaTeX. This enables easy formatting while supporting raw LaTeX for advanced users.
 
 ### ✅ Format and Rendering Flow
 
 1.  **Define content** in a `YAML` file. The file's structure is a set of sections (e.g., `profile`, `experience`).
 2.  **Control section order** using the `sections` list at the top of your YAML file. The renderer will iterate through this list and include the corresponding `.tex` templates from `src/sections/`.
-3.  **Write content** using Markdown-style strings for formatting.
-4.  **The build script** automatically converts Markdown strings to LaTeX.
+3.  **Write content** using Markdown-style strings for formatting (basic support).
+4.  **The build script** automatically renders the content into LaTeX.
 5.  **Jinja2 templates** render the content into a final `.tex` file, which is then compiled into a PDF using `latexmk`.
 
 You may write your resume in clean, readable YAML with light formatting, while still gaining full LaTeX output fidelity.
@@ -163,7 +162,7 @@ experience:
 │   ├── build_docker.sh       # Docker-based build script
 │   └── build_local.sh        # Local build script (for VSCode tasks)
 ├── Dockerfile              # To build image with all build tools
-├── requirements.txt        # Python dependencies (jinja2, pyyaml, pypandoc)
+├── requirements.txt        # Python dependencies (jinja2, pyyaml)
 ├── output/                 # Example compiled PDF is here, but you can output wherever you want
 └── src/
     ├── main.tex              # Top-level LaTeX template
@@ -185,9 +184,9 @@ The Docker build is the simplest way to compile your resume, as it requires no l
 
 From the project root, run:
 ```bash
-./scripts/build_docker.sh
+./scripts/build_docker.sh --content contents/resume.yaml --output output/Your_Name_Resume.pdf --build build
 ```
-This command will build the Docker image if it doesn't exist, then run the compilation using `contents/resume.yaml`, and place the output in the `output/` directory.
+This command will build the Docker image if it doesn't exist, then run the compilation using the specified YAML file, and place the output in the `output/` directory.
 
 #### Custom Docker Builds
 
@@ -195,21 +194,18 @@ You can specify a different content file, output directory, or filename.
 
 ```bash
 # Build a specific YAML file
-./scripts/build_docker.sh --content contents/jobs/MyCustomResume.yaml
-
-# Specify output directory and filename
-./scripts/build_docker.sh --output-dir ./pdfs --filename my_resume.pdf
+./scripts/build_docker.sh --content contents/jobs/MyCustomResume.yaml --output output/MyCustomResume.pdf --build build
 ```
 
 Build script options:
 * `--content`: Path to the input YAML file.
-* `--output-dir`: Output directory (default: `./output`).
-* `--filename`: Output file name (default: auto-generated from profile name).
+* `--output`: Output PDF file path (default: auto-generated from profile name).
+* `--build`: Build directory for intermediate files (required).
 * `-y, --yes`: Skip the prompt to overwrite an existing file.
 
 ### 🐍 Local Development (No Docker)
 
-For local development, you must have **Python**, **Pandoc**, and a **LaTeX** distribution installed.
+For local development, you must have **Python** and a **LaTeX** distribution installed.
 
 First, set up the Python environment:
 ```bash
@@ -218,12 +214,10 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-While you can run `compile_resume.py` directly, the recommended way to build locally is via the provided VSCode task, which uses `scripts/build_local.sh`.
-
-1.  Open the project in VSCode.
-2.  Open the YAML file you wish to compile (e.g., `contents/resume.yaml`).
-3.  Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
-4.  Run the task `Tasks: Run Task` and select `Compile YAML`.
+You can run `compile_resume.py` directly:
+```bash
+python compile_resume.py --content contents/resume.yaml --output output/Your_Name_Resume.pdf --build build
+```
 
 The compiled PDF will appear in the `output/` directory. If you compile a file from `contents/jobs/`, the PDF will be placed in `output/jobs/`.
 
@@ -242,11 +236,11 @@ To create a resume tailored for a specific company:
 
 1.  Create a new YAML file, e.g., `contents/jobs/CompanyA.yaml`.
 2.  Customize the content as needed.
-3.  Build it using the `--content` flag:
+3.  Build it using the `--content` and `--output` flags:
     ```bash
-    ./scripts/build_docker.sh --content contents/jobs/CompanyA.yaml --output [Your_Name]_Resume_CompanyA.pdf.
+    ./scripts/build_docker.sh --content contents/jobs/CompanyA.yaml --output output/CompanyA_Resume.pdf --build build
     ```
-    The output will be named `[Your_Name]_Resume_CompanyA.pdf`.
+    The output will be named `CompanyA_Resume.pdf`.
 
 ### Editing Styles
 
