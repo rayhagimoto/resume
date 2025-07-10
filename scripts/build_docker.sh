@@ -107,13 +107,14 @@ if [ -f "$ABSOLUTE_OUTPUT_PATH" ]; then
 fi
 
 # Mount project dir and a dedicated output volume
-# Convert absolute path to relative path for use inside the container
 RELATIVE_CONTENT_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$CONTENT_FILE")
+RELATIVE_BUILD_PATH=$(realpath --relative-to="$PROJECT_ROOT" "$OUTPUT_DIR")
+
 docker run --rm \
     -v "$PROJECT_ROOT":/app \
     -v "$OUTPUT_DIR":/output \
     "$IMAGE_NAME" \
-    bash -c "cd /app && python3 compile_resume.py --content \"$RELATIVE_CONTENT_PATH\" --output \"/output/$FILENAME\""
+    bash -c "cd /app && python3 compile_resume.py --content \"$RELATIVE_CONTENT_PATH\" --output \"/output/$FILENAME\" --build \"$RELATIVE_BUILD_PATH\""
 
 echo "✅ Resume built successfully: $ABSOLUTE_OUTPUT_PATH"
 ls -lh "$ABSOLUTE_OUTPUT_PATH"
