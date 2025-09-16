@@ -181,11 +181,15 @@ def main():
     parser.add_argument('-b', '--build', default=None, help='Directory to store build artifacts')
     args = parser.parse_args()
 
-    build_dir = str(Path(args.build.strip()).resolve())
-
     content_file = args.content.strip()
     if content_file and not content_file.endswith((".yaml", ".yml")):
         content_file = content_file + ".yaml"
+
+    # Use default build directory if not provided, consistent with compile_pdf logic
+    if args.build:
+        build_dir = str(Path(args.build.strip()).resolve())
+    else:
+        build_dir = str((ROOT / "build").resolve())
 
     content = render_latex(content_file, build_dir)
 
